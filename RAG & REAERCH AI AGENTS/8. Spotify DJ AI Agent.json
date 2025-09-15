@@ -1,0 +1,750 @@
+{
+  "name": "Spotify DJ AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        0
+      ],
+      "id": "65114e84-5197-4223-a44a-e2c98b4f30a3",
+      "name": "Telegram Trigger",
+      "webhookId": "e4949cc8-e927-4781-baf9-cdf75a8f4f9f",
+      "credentials": {
+        "telegramApi": {
+          "id": "3G1bf5W5dRCTRZtN",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=User Prompt: {{ $('Telegram Trigger').item.json.message.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Chill",
+              "description": "=Music with relaxing, mellow, or laid-back vibes. Perfect for unwinding, background ambiance, or quiet time."
+            },
+            {
+              "category": "=Energetic",
+              "description": "=High-tempo, upbeat music that boosts energy and motivation. Great for movement, action, or high-focus tasks."
+            },
+            {
+              "category": "=Focus",
+              "description": "=Calm and minimal music (often instrumental) to help with studying, working, or deep concentration."
+            },
+            {
+              "category": "=Happy",
+              "description": "=Bright, joyful, and uplifting tracks that create a positive and cheerful mood."
+            },
+            {
+              "category": "=Sad",
+              "description": "=Emotional, slow, or melancholic music that fits introspective or sorrowful feelings."
+            },
+            {
+              "category": "=Workout",
+              "description": "=Intense and powerful tracks with a driving rhythm, suitable for exercising or staying physically active."
+            },
+            {
+              "category": "=Party",
+              "description": "=Fun, lively, and danceable music made for socializing, celebrations, or night outs."
+            },
+            {
+              "category": "Romantic",
+              "description": "=Gentle, warm, or heartfelt music that suits moments of love, connection, or intimacy."
+            },
+            {
+              "category": "Motivational",
+              "description": "=Inspiring, confident, and empowering music that pushes you to take action or overcome challenges."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        500,
+        -120
+      ],
+      "id": "b3a0367d-6cb8-41ac-bb66-92b96c04bc5a",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        300
+      ],
+      "id": "3cad9af3-473d-43d6-bf59-e07439f8fa66",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "GGNW9JnvMJrZ8lu8",
+          "name": "OpenAi account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "sad songs",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        0
+      ],
+      "id": "abffc501-0bc4-4d4e-a714-02f2ef19f12d",
+      "name": "Search tracks by keyword",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "playlist",
+        "operation": "create",
+        "name": "=Playlist {{ $now.format('yyyy-MM-dd HH:00') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        300,
+        0
+      ],
+      "id": "8036032a-c5ac-48e8-80e5-75bedf879686",
+      "name": "Create a playlist1",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "party hits",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        280
+      ],
+      "id": "337a8498-ff18-4c01-a244-c94a7e5b8e8b",
+      "name": "Search tracks by keyword1",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "happy mood",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        -160
+      ],
+      "id": "4ff80103-2d10-4318-9f37-174fc2a019f8",
+      "name": "Search tracks by keyword2",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "romantic songs",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        920,
+        420
+      ],
+      "id": "fa7c2733-63f1-4a27-804c-de822201cd2f",
+      "name": "Search tracks by keyword3",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "focus music",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        -300
+      ],
+      "id": "a7fce7d6-dde3-44bd-a1e7-61c1b5e11a8a",
+      "name": "Search tracks by keyword4",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "boost your energy",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        920,
+        -440
+      ],
+      "id": "1d1098f2-d93d-4320-90ff-4a9c0ed0be04",
+      "name": "Search tracks by keyword5",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "motivational songs",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        780,
+        560
+      ],
+      "id": "a4e4e284-cd2a-453f-bfb2-04bd5da7d1c9",
+      "name": "Search tracks by keyword6",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "chill vibes",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        780,
+        -580
+      ],
+      "id": "9d132db0-053b-4200-b8cc-d37769b1f18e",
+      "name": "Search tracks by keyword7",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "track",
+        "operation": "search",
+        "query": "gym motivation",
+        "limit": 20,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        140
+      ],
+      "id": "596e12e6-f28d-477f-84e2-da5dc4eafd88",
+      "name": "Search tracks by keyword8",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "30133409-f774-4e94-abc5-6e38ca8b9210",
+              "name": "uri",
+              "value": "={{ $json.uri }}",
+              "type": "string"
+            },
+            {
+              "id": "a9235cf2-fb10-4827-8095-124ee5939913",
+              "name": "album.artists[0].external_urls.spotify",
+              "value": "={{ $json.album.artists[0].external_urls.spotify }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1700,
+        0
+      ],
+      "id": "8508f0bd-9483-440f-9ef3-451e57c266a4",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "resource": "playlist",
+        "id": "={{ $('Create a playlist1').item.json.uri }}",
+        "trackID": "={{ $json.uri }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "890c9f1a-e16f-4cde-a475-82156d1f766e",
+      "name": "Add an Item to a playlist",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "9SJR98aszcBvxwK1",
+          "name": "Spotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "30133409-f774-4e94-abc5-6e38ca8b9210",
+              "name": "uri",
+              "value": "={{ $json.uri }}",
+              "type": "string"
+            },
+            {
+              "id": "a9235cf2-fb10-4827-8095-124ee5939913",
+              "name": "album.artists[0].external_urls.spotify",
+              "value": "={{ $json.album.artists[0].external_urls.spotify }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1700,
+        -400
+      ],
+      "id": "42a3454b-e4a5-4b79-9baa-2e5999a856df",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "30133409-f774-4e94-abc5-6e38ca8b9210",
+              "name": "uri",
+              "value": "={{ $json.uri }}",
+              "type": "string"
+            },
+            {
+              "id": "a9235cf2-fb10-4827-8095-124ee5939913",
+              "name": "album.artists[0].external_urls.spotify",
+              "value": "={{ $json.album.artists[0].external_urls.spotify }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1700,
+        400
+      ],
+      "id": "c14e5ccf-07b9-408a-b9ef-31d4b2e511a3",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2140,
+        0
+      ],
+      "id": "59420c7d-a040-40ab-8bd5-8a82c398e919",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Your new playlist is ready!\n\nPlease check it out there: {{ $('Create a playlist1').item.json.external_urls.spotify }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2360,
+        0
+      ],
+      "id": "db71ba1b-994c-43fb-8bb1-6d0eebd02d6b",
+      "name": "Send a text message",
+      "webhookId": "dac5278f-07db-49d7-bbd1-04e7626ef195",
+      "credentials": {
+        "telegramApi": {
+          "id": "3G1bf5W5dRCTRZtN",
+          "name": "Telegram account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create a playlist1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Search tracks by keyword7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search tracks by keyword5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search tracks by keyword4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search tracks by keyword2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search tracks by keyword",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search tracks by keyword8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search tracks by keyword1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search tracks by keyword3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search tracks by keyword6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a playlist1": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword7": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword8": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search tracks by keyword6": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Add an Item to a playlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Add an Item to a playlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Add an Item to a playlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add an Item to a playlist": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "89a1194f-e154-4820-887e-ae29b01a1e85",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f96a7e8659163312cbaf16ad76688747ea79fa6bf8e4ec720c14444abdf2c12c"
+  },
+  "id": "VPR2ovLluHDdH7LQ",
+  "tags": []
+}

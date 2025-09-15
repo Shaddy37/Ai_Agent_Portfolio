@@ -1,0 +1,547 @@
+{
+  "name": "Day Trader AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        220
+      ],
+      "id": "adee1c4c-d0c2-492b-86f8-84cf5151d93f",
+      "name": "Telegram Trigger",
+      "webhookId": "39d642be-d42b-4ae2-9b63-ca731130f505",
+      "credentials": {
+        "telegramApi": {
+          "id": "3G1bf5W5dRCTRZtN",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.twelvedata.com/time_series",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $json.message.text }}"
+            },
+            {
+              "name": "interval",
+              "value": "1min"
+            },
+            {
+              "name": "outputsize",
+              "value": "100"
+            },
+            {
+              "name": "apikey",
+              "value": "cc6d525d3b3d4df597caf948f35a690a"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        40
+      ],
+      "id": "12e70844-0eb6-4754-b4ce-37c102e82511",
+      "name": "1 Minute Interval"
+    },
+    {
+      "parameters": {
+        "url": "https://api.twelvedata.com/time_series",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $json.message.text }}"
+            },
+            {
+              "name": "interval",
+              "value": "15min"
+            },
+            {
+              "name": "outputsize",
+              "value": "100"
+            },
+            {
+              "name": "apikey",
+              "value": "cc6d525d3b3d4df597caf948f35a690a"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        220
+      ],
+      "id": "9396612b-2cdb-4e4a-8802-a8d8c5ac7e23",
+      "name": "15 Minutes Interval"
+    },
+    {
+      "parameters": {
+        "url": "https://api.twelvedata.com/time_series",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $json.message.text }}"
+            },
+            {
+              "name": "interval",
+              "value": "30min"
+            },
+            {
+              "name": "outputsize",
+              "value": "100"
+            },
+            {
+              "name": "apikey",
+              "value": "cc6d525d3b3d4df597caf948f35a690a"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        400
+      ],
+      "id": "6cb6cef2-dc70-4d8f-b43c-443c5e02ab4e",
+      "name": "30 Minutes Interval"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        700,
+        220
+      ],
+      "id": "11ea8f10-f0e6-450b-980d-f6fb8eb8b636",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        920,
+        220
+      ],
+      "id": "9a037a56-1ee4-4584-b6be-e96f607f78b7",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "const root = items[0].json;\n\n// extract datasets\nconst data1m = root.data[0];   // 1min\nconst data15m = root.data[1];  // 15min\nconst data30m = root.data[2];  // 30min\n\n// standardize format\nfunction normalize(values) {\n  return values\n    .map(v => ({\n      time: new Date(v.datetime),\n      open: parseFloat(v.open),\n      high: parseFloat(v.high),\n      low: parseFloat(v.low),\n      close: parseFloat(v.close),\n    }))\n    .sort((a, b) => a.time - b.time);\n}\n\nreturn [\n  {\n    json: {\n      ticker: data1m.meta.symbol,\n      candles1m: normalize(data1m.values),\n      candles15m: normalize(data15m.values),\n      candles30m: normalize(data30m.values),\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        220
+      ],
+      "id": "6a46a5bb-6e1f-4d93-b6a6-e20fd338286f",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.message.text }}"
+            },
+            {
+              "name": "from",
+              "value": "={{ $today.minus({ days: 2 }).toFormat('yyyy-MM-dd') }}"
+            },
+            {
+              "name": "apikey",
+              "value": "8dfb0004004243e59dbb92e083438e67"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        -380
+      ],
+      "id": "1e577af6-5dcf-4855-9bf3-dabb12c36b77",
+      "name": "Get News"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a highly intelligent and accurate sentiment analyzer specializing in the financial markets. Analyze the sentiment of the provided text.\n\n- Evaluate immediate market reaction, news impact, and technical volatility.\n- Classify the sentiment as: \"Positive\", \"Neutral\", or \"Negative\".\n- Provide a score between -1 (very negative) and 1 (very positive).\n- Give a short rationale explaining the sentiment.\n\nYour output must be a **JSON object** with:\n- \"category\"\n- \"score\"\n- \"rationale\"\n\nOnly return the JSON. Example:\n\n{\n  \"shortTermSentiment\": {\n    \"category\": \"Positive\",\n    \"score\": 0.7,\n    \"rationale\": \"...\"\n  }\n}\n\nNow analyze the following text and return only the JSON:\n{{ JSON.stringify($json.articles) }}\n",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        540,
+        -380
+      ],
+      "id": "0e570e7f-f9e1-4a85-b55e-23e8721b70ab",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "0qLMfnxIrfTptc0E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1460,
+        200
+      ],
+      "id": "6158dca8-ee96-462f-a806-5f4ff52ee64f",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1660,
+        200
+      ],
+      "id": "22261b9f-a308-4d1d-b476-e7f306d53871",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=** Purpose **\n\nYou are a professional day trader.\nBased on the candle data and sentiment analysis provided below, give one clear trading recommendation: Buy, Sell, or Hold.\n\n** Your decision must consider **\n\n- Price action from 1m, 15m, and 1h candles\n- Overall sentiment over the last 24h\n\n** Then return the following details **\n\n- Trade Action (Buy / Sell / Hold — based on analysis)\n- Entry Price\n- Stop-Loss\n- Target Price\n- Data for Review\n\nCandle Data:\n{{ JSON.stringify($json.data[0]) }}\n\nSentiment (Past 24h):\n{{ JSON.stringify($json.data[1]) }}\n\n** Each candle includes:\n\n- timeframe: “1m”, “15m”, or “1h”\n- candles: [openTime, open, high, low, close, volume, …]\n\nSteps to Decide:\n\n- Group candles by timeframe\n- Use 1m & 15m candles with RSI, MACD, and trendlines for timing\n- Confirm trend using 1h data\n- Use sentiment to finalize the recommendation\n- Your Output Format (No explanation text!):\n\nYour Output Format (No explanation text!):\n\n- Trade Action: BUY | SELL | HOLD  \n- Entry Price: <number>  \n- Stop-Loss: <number>  \n- Target Price: <number>",
+        "options": {
+          "systemMessage": "=** Response Format **\n\n- Technical Recommendation:\n<BUY | SELL | HOLD>\n\n- Entry Price:\n<number or N/A>\n\n- Stop-Loss:\n<number or N/A>\n\n- Target/Exit Price:\n<number or N/A>\n\n- Hold or Exit Decision:\n<Hold | Exit>\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1860,
+        200
+      ],
+      "id": "3fec275a-2b41-4837-8602-27a238340650",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1880,
+        420
+      ],
+      "id": "8f9d8bce-dc9e-47c8-9386-f9ac32621a33",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "0qLMfnxIrfTptc0E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2220,
+        200
+      ],
+      "id": "db0d45fe-b2db-49ca-84bc-e109199fa47c",
+      "name": "Send a text message",
+      "webhookId": "1df180f3-91f4-4d90-bb62-d259dc6faa6d",
+      "credentials": {
+        "telegramApi": {
+          "id": "3G1bf5W5dRCTRZtN",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Price Data Collection (Candle Intervals)",
+        "height": 760,
+        "width": 1520,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -100
+      ],
+      "id": "32701db1-8c2f-492b-97e3-de2c65147277",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# News Processing",
+        "height": 380,
+        "width": 1520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -500
+      ],
+      "id": "b83b64ad-3b0f-448d-b95c-e44a6622c9d4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Outputs",
+        "height": 760,
+        "width": 1160,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        -100
+      ],
+      "id": "e7f44b6e-3947-448b-880d-56287991e543",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "1 Minute Interval",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "15 Minutes Interval",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "30 Minutes Interval",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1 Minute Interval": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "15 Minutes Interval": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "30 Minutes Interval": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get News": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c44c5ca4-4590-42c6-9ee1-7ea5a7efb6f6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f96a7e8659163312cbaf16ad76688747ea79fa6bf8e4ec720c14444abdf2c12c"
+  },
+  "id": "k4NrnZgsc37m4hZN",
+  "tags": []
+}

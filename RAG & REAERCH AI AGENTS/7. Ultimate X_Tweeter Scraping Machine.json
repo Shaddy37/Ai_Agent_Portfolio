@@ -1,0 +1,475 @@
+{
+  "name": "Ultimate X/Tweeter Scraping Machine",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.twitterapi.io/twitter/tweet/advanced_search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "openai"
+            },
+            {
+              "name": "queryType",
+              "value": "Top"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "=https://api.twitterapi.io/twitter/tweet/advanced_search?cursor={{ $response.body.next_cursor }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ $response.body.has_next_page == false }}",
+              "limitPagesFetched": true,
+              "maxRequests": 3
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        0
+      ],
+      "id": "07dcaeb2-0f56-4354-a90d-7d410a72ab92",
+      "name": "Get Tweets",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "eOIOHt5fPxNRDsdD",
+          "name": "Twitter/X"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        60,
+        0
+      ],
+      "id": "c381df12-7249-45f3-b06a-6b57d4c53a99",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1500,
+        100
+      ],
+      "id": "6384f95c-5c31-49ba-8304-3641329ec252",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "GGNW9JnvMJrZ8lu8",
+          "name": "OpenAi account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "krystian7431@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1800,
+        100
+      ],
+      "id": "0f801a24-de55-4aef-8236-fd5ee0597aaf",
+      "name": "Send a message in Gmail",
+      "webhookId": "b21b1650-90c0-438e-98b1-ae5e18cca950",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lFEqkhcaTtYQk41l",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Get Tweets Data from X",
+        "height": 460,
+        "width": 800,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -180
+      ],
+      "id": "a349cebe-1817-4ec0-90ff-f0c3f24af9da",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Filtering & Storage",
+        "height": 820,
+        "width": 520,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        780,
+        -360
+      ],
+      "id": "889c017f-20ee-4daa-8ac2-7ba8eabffd01",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1HGjBbQCsP6PD4cOq9JsqtAaWHHF5qYFtCBx_aeu-sxw",
+          "mode": "list",
+          "cachedResultName": "Twitter/X Posts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HGjBbQCsP6PD4cOq9JsqtAaWHHF5qYFtCBx_aeu-sxw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HGjBbQCsP6PD4cOq9JsqtAaWHHF5qYFtCBx_aeu-sxw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.tweetId }}",
+            "URL": "={{ $json.url }}",
+            "Content": "={{ $json.content }}",
+            "Likes": "={{ $json.likeCount }}",
+            "Retweets": "={{ $json.retweetCount }}",
+            "Replies": "={{ $json.replyCount }}",
+            "Quotes": "={{ $json.quoteCount }}",
+            "Views": "={{ $json.viewCount }}",
+            "Date": "={{ $json.createdAt }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Retweets",
+              "displayName": "Retweets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Replies",
+              "displayName": "Replies",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quotes",
+              "displayName": "Quotes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Views",
+              "displayName": "Views",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        980,
+        -20
+      ],
+      "id": "91567392-be7c-4089-8967-c7de89bba2b9",
+      "name": "Save Information",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RNwKb4ui91TeJRRZ",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Initialize an empty array to collect all tweets\nlet allTweets = [];\n\n// Loop through each input item\nfor (let item of $input.all()) {\n  if (item.json.tweets && Array.isArray(item.json.tweets)) {\n    allTweets = allTweets.concat(item.json.tweets);\n  }\n}\n\n// Function to format the date in a more human-readable way\nfunction formatDate(dateString) {\n  if (!dateString) return '';\n  \n  try {\n    const date = new Date(dateString);\n    return date.toLocaleString('en-US', {\n      year: 'numeric',\n      month: 'long',\n      day: 'numeric',\n      hour: '2-digit',\n      minute: '2-digit'\n    });\n  } catch (error) {\n    console.log(\"Error formatting date:\", error);\n    return dateString;\n  }\n}\n\n// Convert and structure the tweets properly\nconst formattedTweets = allTweets.map(tweet => ({\n  json: {\n    tweetId: tweet.id || '',\n    url: tweet.url || '',\n    content: tweet.text || '',\n    likeCount: tweet.likeCount || 0,\n    retweetCount: tweet.retweetCount || 0,\n    replyCount: tweet.replyCount || 0,\n    quoteCount: tweet.quoteCount || 0,\n    viewCount: tweet.viewCount || 0,\n    createdAt: formatDate(tweet.createdAt)\n  }\n}));\n\n// Output all tweets as separate items\nreturn formattedTweets;\n"
+      },
+      "id": "59e7cd09-0247-4a56-a5bb-3202bc3a0f46",
+      "name": "Extract Tweet Content",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        540,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1bce9165-024c-4e32-bfa0-ac104f94652b",
+              "leftValue": "={{ $json.likeCount }}",
+              "rightValue": 1000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        980,
+        -240
+      ],
+      "id": "91ec245f-2dce-4ed0-9e94-e5c0bbe1f8b1",
+      "name": "Filter Low-Performing Tweets"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst allItems = $input.all();\n\nconst combined = allItems.map(item => item.json.Content).join('\\n\\n---\\n\\n');\n\nreturn [{ json: { combinedContent: combined } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        980,
+        220
+      ],
+      "id": "6ff71957-24d2-4fae-8780-2c9e252d73d2",
+      "name": "Format for AI"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a skilled social media analyst specializing in summarizing high-impact Twitter/X content.\n\nYou will receive a string that includes several high-performing tweets combined into one text block. Each tweet is separated by a line of \"---\".\n\nTweets input is:\n{{ $json.combinedContent }}\n\nYour tasks:\n\n1. Write a concise one-sentence overview summarizing today’s main topic or pattern.\n2. List the Top 3 Most Impactful Tweets. For each tweet, include:\n   - A brief summary\n   - Why it stands out\n   - A short snippet of the tweet (up to 280 characters)\n\n3. Highlight one tweet that is surprising, controversial, or unique, if any, and explain why.\n4. Suggest two intelligent next actions based on today’s tweet content.\n\n---\n\n### Email Formatting Instructions:\n\n- Format the final output as a clean **HTML email report**.\n- Use the following styling:\n  - `<h1 style=\"color:#D32F2F;\">🚀 Daily Twitter/X Highlights – {{ $now.plus(8,hours).format('yyyy-MM-dd HH:mm') }}</h1>` for the main title\n  - `<h2 style=\"color:#1976D2;\">...</h2>` for section headers\n  - `<ul><li>` for bullet points\n  - `<p>` for paragraphs\n  - Use `<b>` to highlight any key names, metrics, or facts\n  - Use `<hr>` between major sections\n\n---\n\n### Email Sending Instructions:\n\nUse the Gmail tool to send the final HTML report.\n\n- **To**: [Your email address here or leave blank if dynamically defined]\n- **Subject**: `🚀 Daily Twitter/X Highlights – {{ $now.plus(8,hours).format('yyyy-MM-dd HH:mm') }}`\n- **Body**: the HTML report you generated\n\nMake sure the email is **HTML formatted**, easy to scan, and includes only the structured summary — do not include the original tweet input or any internal explanations. Just output the final result and send it via Gmail.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        -60
+      ],
+      "id": "80399a56-4b1e-47b3-95f0-ab4d324c9832",
+      "name": "AI Summary Generator"
+    },
+    {
+      "parameters": {
+        "content": "# Send AI Summary ",
+        "height": 460,
+        "width": 800,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        -180
+      ],
+      "id": "8d500ecb-7a86-4f54-8f3f-bdc030db307c",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Tweets": {
+      "main": [
+        [
+          {
+            "node": "Extract Tweet Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Summary Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Summary Generator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Information": {
+      "main": [
+        [
+          {
+            "node": "Format for AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Tweet Content": {
+      "main": [
+        [
+          {
+            "node": "Filter Low-Performing Tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Low-Performing Tweets": {
+      "main": [
+        [
+          {
+            "node": "Save Information",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format for AI": {
+      "main": [
+        [
+          {
+            "node": "AI Summary Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "94eaa057-9df4-410f-b86f-0f90dccdb79f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f96a7e8659163312cbaf16ad76688747ea79fa6bf8e4ec720c14444abdf2c12c"
+  },
+  "id": "dMsdQnLUMA1LOcoG",
+  "tags": []
+}

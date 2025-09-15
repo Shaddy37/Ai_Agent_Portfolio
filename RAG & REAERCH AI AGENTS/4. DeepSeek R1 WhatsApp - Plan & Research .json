@@ -1,0 +1,248 @@
+{
+  "name": "My workflow 28",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ]
+      },
+      "id": "cae579de-392a-454d-ae63-36cb1e79a04e",
+      "name": "WhatsApp Trigger",
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        460,
+        460
+      ],
+      "webhookId": "725bead8-252c-414a-91c5-195ec761b0a5",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "MwUC6bDV20nydurN",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "466179296585433",
+        "recipientPhoneNumber": "+44 7562482601",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "id": "b4c1249b-8f0e-40fc-8958-e3c2dcae3ea4",
+      "name": "WhatsApp Business Cloud",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        460
+      ],
+      "credentials": {
+        "whatsAppApi": {
+          "id": "y3Om46tHaI64MekU",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8318960e-f953-49ed-a563-31f7777725f3",
+      "name": "SerpAPI",
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        680
+      ],
+      "credentials": {
+        "serpApi": {
+          "id": "P9ql1URD3fGDt8hv",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8479ef0c-6b15-4556-a7f7-a8d956ebb4a2",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        920,
+        680
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "hdRYPqX7PaZRro2X",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "{{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}"
+      },
+      "id": "cae34cbd-5c12-40eb-b1d3-d45c3467bfa7",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "model": "deepseek-r1-distill-llama-70b",
+        "options": {}
+      },
+      "id": "6a03f093-76dc-4b61-8c6c-84db38ed60d0",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        600,
+        680
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "hqdsKbo1zaWuq2Ac",
+          "name": "Groq account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.messages[0].text.body }}",
+        "options": {
+          "systemMessage": "Role: You are an AI Planner Agent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        600,
+        460
+      ],
+      "id": "73ffaa90-ad10-47d5-8e81-96ce83c3608b",
+      "name": "DeepSeek R1 Planner"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=Role:\nYou are an AI Search Agent with access to SerpAPI. Your task is to find relevant locations, services, and resources based on the plan created by the AI Planner Agent.\n\nInstructions:\n\n- Receive the structured task plan from the planner agent as {{ $json.output }}.\n- Identify any steps that involve finding specific places, services, or resources.\n- Use SerpAPI to search for relevant results.\n- If a step involves finding a place (e.g., coworking spaces, hotels, restaurants), provide:\n- Direct links for booking or more details.\n  - Name\n  - Website\n  - Location\n  \n- If a step requires booking services, include official links.\n- Format the response clearly without using special characters such as #, *, -, or markdown formatting.\n- Prioritize trusted sources and ensure links are actionable.\n- PROVIDES AS MUCH DETAILS AS POSSIBLE.\n- Ensure the output is structured and easy to read.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        920,
+        460
+      ],
+      "id": "bc20854f-129a-422d-b5e4-05aac2cc238c",
+      "name": "Research Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "DeepSeek R1 Planner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "DeepSeek R1 Planner",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "DeepSeek R1 Planner",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek R1 Planner": {
+      "main": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Business Cloud",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a33b1853-1d4e-4c30-a7c6-17f7a02e2c20",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d1853d6d92799d2de46a947c80ac9a5af91665397cc93a1b568769b332366e37"
+  },
+  "id": "Bali8Sn95sWScKCz",
+  "tags": []
+}
