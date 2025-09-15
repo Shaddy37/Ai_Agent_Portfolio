@@ -1,0 +1,95 @@
+🧠 RAG & Research AI Agents – Workflow Portfolio
+================================================
+
+This repository contains a collection of **AI-powered n8n workflows** focused on **Retrieval-Augmented Generation (RAG)**, **AI assistants**, and **automation agents** for research and productivity.
+
+Each workflow is stored as a .json file that you can directly import into your **n8n instance** and start experimenting with.
+
+📂 Workflows Included
+---------------------
+
+### 1\. **First RAG Agent** (1. First\_RAG\_Agent.json)
+
+*   🔎 A basic **Retrieval-Augmented Generation (RAG) agent** workflow.
+    
+*   Uses a combination of **vector search + LLM** to answer questions with context.
+    
+*   Great for **research tasks** where answers need to be grounded in documents or knowledge bases.
+    
+*   Serves as a **starter template** to build more advanced RAG pipelines.
+    
+
+### 2\. **DeepSeek R1 AI Agent** (2. DeepSeek\_R1\_AI\_Agent.json)
+
+*   🤖 An advanced **personal assistant AI agent** powered by **DeepSeek models**.
+    
+*   Features:
+    
+    *   Multi-agent system with a **Planner AI** and **Executive AI**.
+        
+    *   Integrated with **Google Calendar** and **Gmail** for task automation.
+        
+    *   Can generate **step-by-step action plans**, send emails, and schedule events.
+        
+    *   Memory-enabled for contextual conversations.
+        
+*   Designed for **daily task automation**, **research assistance**, and **appointment handling**.
+    
+
+### 3\. **Ultimate X/Tweeter Scraping Machine** (7. Ultimate X\_Tweeter Scraping Machine.json)
+
+*   🐦 A complete **Twitter/X scraping and analysis pipeline**.
+    
+*   Features:
+    
+    *   Fetches tweets with an API on a **scheduled trigger**.
+        
+    *   Filters out low-performing tweets (e.g., <1000 likes).
+        
+    *   Stores structured tweet data into **Google Sheets**.
+        
+    *   Uses **OpenAI** to summarize high-performing tweets into a **daily HTML email report**.
+        
+    *   Sends the report via **Gmail** automatically.
+        
+*   Perfect for **trend analysis**, **social listening**, or **content curation**.
+
+And Many More------
+    
+
+🚀 How to Use
+-------------
+
+1.  git clone https://github.com/Shaddy37/Ai\_Agent\_Portfolio.git
+    
+2.  Import .json files into your **n8n instance**:
+    
+    *   Go to **Workflows → Import from File**.
+        
+3.  Add your API credentials (OpenAI, DeepSeek, Gmail, Google Sheets, Twitter API).
+    
+4.  Run or schedule the workflows as needed.
+    
+
+🛠️ Requirements
+----------------
+
+*   [n8n](https://n8n.io) (self-hosted or cloud)
+    
+*   API credentials for:
+    
+    *   OpenAI or DeepSeek
+        
+    *   Gmail + Google Sheets
+        
+    *   Twitter API (via proxy or third-party provider)
+        
+
+📌 Notes
+--------
+
+*   These workflows are meant as **templates**. You can extend or adapt them to your own use cases.
+    
+*   Sensitive credentials (API keys, OAuth) are **not included** in these JSONs – configure them in your n8n environment.
+    
+*   Some workflows use **LangChain nodes** (available in recent n8n versions).
