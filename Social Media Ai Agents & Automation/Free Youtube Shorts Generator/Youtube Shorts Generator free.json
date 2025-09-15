@@ -1,0 +1,1279 @@
+{
+  "name": "Youtube Shorts Generator free",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "dae69f20-5cc7-4ddf-8f97-ca4fab5d3969",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus",
+          "mode": "list",
+          "cachedResultName": "0$ Motivational Videos Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Video POOL",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "51e92aaf-3875-44ca-be78-e57d4ea27e83",
+      "name": "Get Youtube Video",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GoTEHwf1SooBbkXb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "e42e8fd8-6caa-4f74-8d9b-d7da26aa9a34",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4c9e7689-a4ca-4efa-b32e-a70a7334f1f8",
+              "name": "File Name",
+              "value": "={{ Array.from({ length:10 }, () =>Math.random().toString(36)[2]).join('') }}",
+              "type": "string"
+            },
+            {
+              "id": "da667cf3-8d09-4380-8d57-c2cf54c36e36",
+              "name": "Folder Name ",
+              "value": "footage",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "e9364c3d-5a1a-4cd2-b6de-ed4e55578895",
+      "name": "Generate File Name"
+    },
+    {
+      "parameters": {
+        "executeOnce": false,
+        "command": "=timeout 300 yt-dlp -o \"./{{ $json['Folder Name '].trim() }}/{{ $json['File Name'] }}.%(ext)s\" \"{{ $('Get Youtube Video').item.json['Video Path'] }}\" -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best\" --no-playlist --progress"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        832,
+        0
+      ],
+      "id": "231d6df7-0e0d-4ee4-a74f-c16687453e0b",
+      "name": "Download Video Footage"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus",
+          "mode": "list",
+          "cachedResultName": "0$ Motivational Videos Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Video POOL",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get Youtube Video').item.json.row_number }}",
+            "Status": "Success",
+            "Internal Path": "=./{{ $('Generate File Name').item.json['Folder Name '] }}/{{ $('Generate File Name').item.json['File Name'] }}.mp4"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Video Path",
+              "displayName": "Video Path",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Internal Path",
+              "displayName": "Internal Path",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        0
+      ],
+      "id": "a7b762fc-0dd4-4383-8943-f9487c4879e8",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GoTEHwf1SooBbkXb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        192
+      ],
+      "id": "c4383dc9-15f6-4c74-9e28-b7bf911a9cfc",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        416,
+        192
+      ],
+      "id": "bff31695-2400-42d8-b46f-ea543d873769",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4c9e7689-a4ca-4efa-b32e-a70a7334f1f8",
+              "name": "File Name",
+              "value": "={{ Array.from({ length:10 }, () =>Math.random().toString(36)[2]).join('') }}",
+              "type": "string"
+            },
+            {
+              "id": "da667cf3-8d09-4380-8d57-c2cf54c36e36",
+              "name": "Folder Name ",
+              "value": "footage",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        192
+      ],
+      "id": "94b1a855-f053-40e6-a825-be757a9cce9d",
+      "name": "Generate File Name1"
+    },
+    {
+      "parameters": {
+        "executeOnce": false,
+        "command": "=yt-dlp -x --audio-format mp3 -o \"./{{ $json['Folder Name '] }}/{{ $json['File Name'] }}.mp3\" \"{{ $('Get YT Music').item.json['Music Path'] }}\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        832,
+        192
+      ],
+      "id": "8aba21cc-b1d9-463c-b2d9-8c9ee8ed3678",
+      "name": "Download Video Footage1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus",
+          "mode": "list",
+          "cachedResultName": "0$ Motivational Videos Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1291333950,
+          "mode": "list",
+          "cachedResultName": "Music Pool",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit#gid=1291333950"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get YT Music').item.json.row_number }}",
+            "Status": "=Success",
+            "Internal Path": "=./{{ $('Generate File Name1').item.json['Folder Name '] }}/{{ $('Generate File Name1').item.json['File Name'] }}.mp3"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Music Path",
+              "displayName": "Music Path",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Internal Path",
+              "displayName": "Internal Path",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        192
+      ],
+      "id": "e3c5a916-0563-44be-a5be-92fe7b7205a3",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GoTEHwf1SooBbkXb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus",
+          "mode": "list",
+          "cachedResultName": "0$ Motivational Videos Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1291333950,
+          "mode": "list",
+          "cachedResultName": "Music Pool",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit#gid=1291333950"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        192
+      ],
+      "id": "da1a32c2-4320-4040-a481-7d2444a3c5fc",
+      "name": "Get YT Music",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GoTEHwf1SooBbkXb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Download all Copyright free YT Video and Music \n",
+        "height": 512,
+        "width": 1312
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ],
+      "id": "865740ae-c4e8-4185-bc59-094827ebde4d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        560
+      ],
+      "id": "3c573d5a-035a-458e-adea-411f1722ee11",
+      "name": "Schedule Trigger2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus",
+          "mode": "list",
+          "cachedResultName": "0$ Motivational Videos Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Video POOL",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Success"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        560
+      ],
+      "id": "1779949c-280d-46a9-a04d-6434dcd27140",
+      "name": "Get All Videos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GoTEHwf1SooBbkXb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Internal Path"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        528,
+        560
+      ],
+      "id": "99b960f8-1fd3-446d-98b2-211b1e09f5df",
+      "name": "Aggregate videos"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus",
+          "mode": "list",
+          "cachedResultName": "0$ Motivational Videos Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1291333950,
+          "mode": "list",
+          "cachedResultName": "Music Pool",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit#gid=1291333950"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Success"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        720,
+        560
+      ],
+      "id": "470561ab-9078-4e10-8b92-a1d15de1aebf",
+      "name": "Get Music",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GoTEHwf1SooBbkXb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus",
+          "mode": "list",
+          "cachedResultName": "0$ Motivational Videos Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 703056733,
+          "mode": "list",
+          "cachedResultName": "Video Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit#gid=703056733"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        560
+      ],
+      "id": "d2c43650-309f-4687-9ae1-41bc938bc687",
+      "name": "Get Video Quotes",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GoTEHwf1SooBbkXb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        560
+      ],
+      "id": "2771f79a-36c9-4b0d-9982-690afaa4dae8",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "126df48b-67ca-46c1-a680-66c244042125",
+              "name": "music_path",
+              "value": "={{ $('Aggregate Music').item.json['Internal Path'][Math.floor(Math.random() * $('Aggregate Music').item.json['Internal Path'].length)] }}",
+              "type": "string"
+            },
+            {
+              "id": "7c308e1c-697d-4e9e-868b-ec1a2d4759f4",
+              "name": "video_path",
+              "value": "={{ $('Aggregate videos').item.json['Internal Path'][0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1440,
+        560
+      ],
+      "id": "1f043ea0-76bc-458d-a3b4-4da58e945bb8",
+      "name": "Pick Video/Music Randomly"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Internal Path"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        880,
+        560
+      ],
+      "id": "7d9faa58-7f96-425b-b664-95957c564afd",
+      "name": "Aggregate Music"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9caa598-c520-4e94-9950-e56ab3f6782f",
+              "name": "File Name",
+              "value": "={{ Array.from({ length:10 }, () =>Math.random().toString(36)[2]).join('') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        816
+      ],
+      "id": "15366f5f-0aa4-4a50-b85a-098a1ee0cd77",
+      "name": "Generate File Names"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fontColor = \"white\";\nconst fonte = \"Arial\";\nconst fontSize = 80;\nconst lineHeightMultiplier = 1.1;\nconst videoWidth = 1080;\nconst avgCharWidth = fontSize * 0.6; // Added missing *\nconst maxCharsPerLine = Math.floor(videoWidth / avgCharWidth);\n\nconst words = $('Get Video Quotes').item.json['Video Transcript'].split(' '); // Fixed spacing\nconst lines = [];\nlet currentLine = '';\nlet currentCharCount = 0;\n\nwords.forEach(word => {\n    const wordLength = word.length; // Fixed spacing\n    const potentialLength = currentCharCount + (currentLine ? 1 : 0) + wordLength;\n    \n    if (potentialLength <= maxCharsPerLine) {\n        currentLine += `${currentLine ? ' ' : ''}${word}`;\n        currentCharCount = potentialLength;\n    } else {\n        lines.push(currentLine);\n        currentLine = word;\n        currentCharCount = wordLength;\n    }\n}); // Fixed closing bracket\n\nif (currentLine) lines.push(currentLine);\n\nconst totalHeight = lines.length * fontSize * lineHeightMultiplier; // Fixed syntax\nconst lineHeight = fontSize * lineHeightMultiplier;\n\nconst drawText = lines.map((line, index) => {\n    const y = `(h/2)-(${Math.ceil(totalHeight/2)})+(${index * lineHeight})`; // Fixed template literal\n    return `drawtext=text='${line}':fontsize=${fontSize}:fontcolor=${fontColor}:x=(w-text_w)/2:y=${y}:fontfile='${fonte}'`; // Fixed complete drawtext syntax\n}).join(',');\n\nreturn {\n    json: {\n        drawText\n    }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        816
+      ],
+      "id": "843c72a4-68de-4ec4-9a1f-beb86c7cff9d",
+      "name": "Generate Text Overlay For Video"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status&uploadType=resumable",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Upload-Content-Type",
+              "value": "video/webm"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "RAW/JSON",
+        "body": "={\n  \"snippet\": {\n    \"title\": \"{{ $('Limit2').item.json['Video Title '] }}\",\n    \"description\": \"{{ $('Limit2').item.json['Video Transcript'] }}\",\n    \"defaultLanguage\": \"en\",\n    \"defaultAudioLanguage\": \"en\"\n  },\n  \"status\": {\n    \"privacyStatus\": \"public\",\n    \"license\": \"youtube\",\n    \"embeddable\": true,\n    \"publicStatsViewable\": true,\n    \"madeForKids\": false\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        752,
+        800
+      ],
+      "id": "83c1f64d-de5f-45ca-965b-440ecfb49520",
+      "name": "Create youtube link",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "XLptfMhVQmonayaE",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileSelector": "=./{{ $('Generate File Names').item.json['File Name'] }}.mp4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        960,
+        800
+      ],
+      "id": "0717e43c-6e8a-4547-a8aa-6677a36fec7f",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Create youtube link').item.json.headers.location }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "video/webm"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1168,
+        800
+      ],
+      "id": "78a6c824-61a2-4781-84cd-4f860aae7720",
+      "name": "Upload Video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "XLptfMhVQmonayaE",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus",
+          "mode": "list",
+          "cachedResultName": "0$ Motivational Videos Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 703056733,
+          "mode": "list",
+          "cachedResultName": "Video Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pn0XrMZxuyLPiFkLH-CiAOcND9RZXzUvkui_ddxnEus/edit#gid=703056733"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Limit2').item.json.row_number }}",
+            "Output Path": "=./{{ $('Generate File Names').item.json['File Name'] }}.mp4",
+            "Status": "Success",
+            "Youtube Link ": "=https://www.youtube.com/watch?v={{ $json.id }}",
+            "Post Time": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Video Title ",
+              "displayName": "Video Title ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Transcript",
+              "displayName": "Video Transcript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Output Path",
+              "displayName": "Output Path",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Link ",
+              "displayName": "Youtube Link ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Post Time",
+              "displayName": "Post Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        800
+      ],
+      "id": "bb6d1e91-6a6b-4ee3-8aef-71b1c7bde587",
+      "name": "Update Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GoTEHwf1SooBbkXb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "executeOnce": false,
+        "command": "=rm ./{{ $('Generate File Names').item.json['File Name'] }}.mp4"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        800
+      ],
+      "id": "697806cc-1dcc-4a76-bd18-52bda7873482",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Motivational Video and will upload on autopilot",
+        "height": 640,
+        "width": 1952,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        512
+      ],
+      "id": "9ffe811d-dcb8-482d-8d7f-67408dacc3b6",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  json: {\n    ffmpegCommand: [\n      'ffmpeg',\n      `-i \"${$('Pick Video/Music Randomly').item.json.video_path.trim()}\"`,\n      `-i \"${$('Pick Video/Music Randomly').item.json.music_path.trim()}\"`,\n      `-filter_complex \"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[vid];color=black@0.3:size=1080x1920:d=10[bg];[vid][bg]overlay[bgvid];[bgvid]${$json.drawText}[outv];[1:a]volume=0.8[aout]\"`,\n      `-map \"[outv]\" -map \"[aout]\"`,\n      `-t 10 -aspect 9:16`,\n      `-c:v libx264 -c:a aac -shortest`,\n      `\"./${$('Generate File Names').item.json['File Name']}.mp4\"`,\n      `-y`\n    ].join(' ')\n  }\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        816
+      ],
+      "id": "c08e11ca-17e9-4178-abcd-fba630ddff86",
+      "name": "Generate Video1"
+    },
+    {
+      "parameters": {
+        "executeOnce": false,
+        "command": "={{$json.ffmpegCommand}}\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        544,
+        800
+      ],
+      "id": "2e11030f-e7a2-44ad-9984-6901149f1111",
+      "name": "Execute Code in single line"
+    }
+  ],
+  "pinData": {
+    "Update row in sheet": [
+      {
+        "json": {
+          "row_number": 3,
+          "Status": "Success",
+          "Internal Path": "./footage/rtn2onp378.mp4"
+        }
+      }
+    ],
+    "Create youtube link": [
+      {
+        "json": {
+          "headers": {
+            "content-type": "text/plain; charset=utf-8",
+            "x-guploader-uploadid": "ABgVH8_3ChB-vBrIrGgwv1-D5YY3LVoeBpfjP5_2z0FUrZEYhgcXVeWDWRR7RUflcGi9zrIdc5YVc2_K2i4UAPqqR0cDWrDSjDGTxnitFMrojw",
+            "location": "https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status&uploadType=resumable&upload_id=ABgVH8_3ChB-vBrIrGgwv1-D5YY3LVoeBpfjP5_2z0FUrZEYhgcXVeWDWRR7RUflcGi9zrIdc5YVc2_K2i4UAPqqR0cDWrDSjDGTxnitFMrojw",
+            "vary": "Origin, X-Origin, Referer",
+            "content-length": "0",
+            "date": "Sun, 07 Sep 2025 18:52:49 GMT",
+            "server": "UploadServer",
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "connection": "close"
+          },
+          "statusCode": 200,
+          "statusMessage": "OK"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Youtube Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Youtube Video": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Generate File Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate File Name": {
+      "main": [
+        [
+          {
+            "node": "Download Video Footage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video Footage": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get YT Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Generate File Name1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate File Name1": {
+      "main": [
+        [
+          {
+            "node": "Download Video Footage1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video Footage1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get YT Music": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get All Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Videos": {
+      "main": [
+        [
+          {
+            "node": "Aggregate videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate videos": {
+      "main": [
+        [
+          {
+            "node": "Get Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Music": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Quotes": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Pick Video/Music Randomly",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Music": {
+      "main": [
+        [
+          {
+            "node": "Get Video Quotes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick Video/Music Randomly": {
+      "main": [
+        [
+          {
+            "node": "Generate File Names",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate File Names": {
+      "main": [
+        [
+          {
+            "node": "Generate Text Overlay For Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Text Overlay For Video": {
+      "main": [
+        [
+          {
+            "node": "Generate Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create youtube link": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Upload Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sheet": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video1": {
+      "main": [
+        [
+          {
+            "node": "Execute Code in single line",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Code in single line": {
+      "main": [
+        [
+          {
+            "node": "Create youtube link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "28b65967-1efc-445b-aeff-45bf0a47dd77",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0253db180f1cfa55c44cd2f2c70350a55db8f748b67979a328d26025462dd98e"
+  },
+  "id": "TWssj68FM40gHlxI",
+  "tags": []
+}
