@@ -1,0 +1,943 @@
+{
+  "name": "Youtube Thumbnail Creator",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "YouTube Thumbnail Designer",
+        "formDescription": "Generate Premium YouTube Thumbnails in seconds.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Video Title",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -100,
+        800
+      ],
+      "id": "32207d36-c78c-4dfa-b927-557c5084bed1",
+      "name": "On form submission1",
+      "webhookId": "cdd44e08-c5d8-4d0f-a04f-b1826a5c156a"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1300,
+        780
+      ],
+      "id": "88caad1f-68b4-4f6e-85d0-f00fdd91a234",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "=You are a professional YouTube thumbnail strategist. Analyze the uploaded creator image with the goal of helping another AI agent generate a personalized thumbnail around this person for {{ $('On form submission1').first().json['Video Title'] }}\n\nDo not describe what the person does or what the video is about. Focus only on the visual characteristics of the person and the photo, to create a design blueprint for thumbnails featuring them.\n\n** Identify the following **\n\n- Face Positioning & Angle: Is the subject facing forward, looking to the side, angled? How much of the face is visible?\n\n- Facial Expression & Emotion: What emotion is conveyed — surprise, curiosity, confidence, joy, etc.? How strong is the expression?\n\n- Lighting Style: Describe lighting (natural, harsh, studio-lit, moody, bright) and its direction (front-lit, back-lit, side-lit).\n\n- Pose & Body Language: Is the subject pointing, gesturing, using props? How dynamic or static is the pose?\n\n- Clothing/Accessories: Any standout colors or elements that should be preserved for brand consistency?\n\n- Background: What type of background is there? Plain, blurred, colored, environmental? Can it be removed or replaced?\n\n- Color Palette & Skin Tone: Note any dominant tones (warm, cool, neutral) that should be preserved in design.\n\nYour output should form a visual personality profile of the creator — the kind of emotional tone, framing, and style that best represents them in thumbnails.\n\nOutput should be generic and reusable. Avoid product/topic references. Focus on helping another agent design brand-consistent, emotionally resonant creator images to be used in YouTube Thumbnail creation later.",
+        "inputType": "base64",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        660,
+        700
+      ],
+      "id": "9ec73781-aabd-4e41-bd62-4cc9b924f481",
+      "name": "Analyze Characters",
+      "credentials": {
+        "openAiApi": {
+          "id": "0qLMfnxIrfTptc0E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "=You are a professional YouTube thumbnail designer tasked with reverse-engineering the success of multiple thumbnails.\n\nAnalyze the uploaded images holistically — without focusing on the specific product, brand, or content shown. Instead, break down the visual strategies and design principles that make these thumbnails effective.\n\n** For each image, extract **\n\n- Visual Style Summary: What stands out first? Is the design loud, minimal, energetic, dramatic, etc.?\n\n- Subject Framing & Emotion: Describe the positioning of the main subject (if present), including body language, facial expression, and emotional tone conveyed.\n\n- Typography and Text Layout: Where is the text placed? What style is it in (bold, shadowed, uppercase, etc.)? How does it contribute to attention capture?\n\n- Color Palette & Contrast: What are the dominant colors? How is contrast used to create visual separation and draw attention?\n\n- Background Treatment: Is the background blurred, flat, colorful, gradient, or abstract? Does it enhance or compete with the subject?\n\n- Visual Hierarchy: Which elements pull focus first, second, and third? How is balance achieved?\n\n- Thumbnail Style Type (optional): Is it close-up face-focused, action shot, object-based, diagrammatic, meme-style, etc.?\n\nAfter analyzing all images, provide a synthesized overview of recurring design patterns or style themes across them. These insights should help us build versatile thumbnail templates that can be reused for different topics in future automations.\n\nDo not describe the product or content in the image. Keep outputs generic and focused on style patterns, layout structures, and attention-driving design tactics.",
+        "inputType": "base64",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        660,
+        900
+      ],
+      "id": "1fd6b478-250b-4372-8a21-c1af9da897fe",
+      "name": "Analyze Designs",
+      "credentials": {
+        "openAiApi": {
+          "id": "0qLMfnxIrfTptc0E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output.prompt }}"
+            },
+            {
+              "name": "size",
+              "value": "1536x1024"
+            },
+            {
+              "name": "quality",
+              "value": "high"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2360,
+        800
+      ],
+      "id": "7c82da62-38a6-41dc-a9c5-9b252c3755c3",
+      "name": "Generate Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "0qLMfnxIrfTptc0E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dfidczp14/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "upload_preset",
+              "value": "n8n_uploads"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2740,
+        660
+      ],
+      "id": "0856bb01-effc-4d7b-9c5d-9defe1d67ad5",
+      "name": "Get Image URL"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "=Check the following aspects of an image, check if the image is:\n\n- only high-quality\n- text is no truncated and nicely visible\n- character on the image is similar to one of these descriptions: {{ $('Characters').item.json['Images Description'] }}\n- there are at least 3 main parts on the image: character, text, tool icons or icons\n\nIf everything is correct respond \"yes\". If something doesn't align with the standards, respond \"no\".\n\n- Don't provide dot at the end of \"yes\" or \"no\" response",
+        "imageUrls": "={{ $json.url }}",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        3420,
+        780
+      ],
+      "id": "0b1d0494-60c1-4747-a4f1-db5de3d0b6e3",
+      "name": "Analyze Image Quality",
+      "credentials": {
+        "openAiApi": {
+          "id": "0qLMfnxIrfTptc0E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5afff31d-7deb-4d0a-8a88-177094d3e9f5",
+              "leftValue": "={{ $json.choices[0].message.content }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "e65bc194-a0d6-4658-9deb-3c34bcb90c0c",
+              "leftValue": "={{ $json.choices[0].message.content }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3520,
+        1040
+      ],
+      "id": "25233cfa-c09f-41c6-bace-91c5df21b34a",
+      "name": "If Image is"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2560,
+        800
+      ],
+      "id": "1c7da0c5-ca43-44f6-8f20-87cd4fd5b451",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1520,
+        960
+      ],
+      "id": "913b1265-8f07-44f9-a372-b88f3093ac64",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "0qLMfnxIrfTptc0E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"prompt\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1740,
+        960
+      ],
+      "id": "a430a29d-d5a1-44bc-a417-160af200ea86",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1wIuEfybxUf-eOyA3e4ystte3s3KTIgse2MpUendpenM",
+          "mode": "list",
+          "cachedResultName": "Youtube Thumbnails",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wIuEfybxUf-eOyA3e4ystte3s3KTIgse2MpUendpenM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wIuEfybxUf-eOyA3e4ystte3s3KTIgse2MpUendpenM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $('On form submission1').item.json['Video Title'] }}",
+            "Image URL": "={{ $('Get Image URL').item.json.url }}"
+          },
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image URL",
+              "displayName": "Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        3800,
+        1200
+      ],
+      "id": "0ef6ea2f-4878-412d-b6b9-71ba6332e399",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RNwKb4ui91TeJRRZ",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('On form submission1').item.json['Video Title'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1w2KbOSriR_Ue93T37OwUEsX9xYeZhKx7",
+          "mode": "list",
+          "cachedResultName": "Ready Thumbnails",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1w2KbOSriR_Ue93T37OwUEsX9xYeZhKx7"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2740,
+        900
+      ],
+      "id": "ae49cbd0-86e7-445e-b254-8a604ac9cf4d",
+      "name": "Google Drive9",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "j1qmlnVLtaZkr0cm",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2920,
+        780
+      ],
+      "id": "1f95a640-9aa5-405f-a281-31e453c835a6",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "url",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3140,
+        780
+      ],
+      "id": "7d46deb8-ebb1-45ac-ba1d-43c1255ceb4a",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1jWusqWV62DHdgnyrWLZmJLird4p3kmd8",
+            "mode": "list",
+            "cachedResultName": "My photos",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1jWusqWV62DHdgnyrWLZmJLird4p3kmd8"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        700
+      ],
+      "id": "f0c9a75e-621c-4a83-879c-8d24f2ca4f01",
+      "name": "Get Characters",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "j1qmlnVLtaZkr0cm",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        440,
+        700
+      ],
+      "id": "9063de18-51f0-43c4-951a-02472f20ee28",
+      "name": "Download Characters",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "j1qmlnVLtaZkr0cm",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1rDu9LZXt67yWNt5fmrNZXFESAHsRn2mM",
+            "mode": "list",
+            "cachedResultName": "Thumbnails I like",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1rDu9LZXt67yWNt5fmrNZXFESAHsRn2mM"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        220,
+        900
+      ],
+      "id": "f2d906f6-b8b5-4a02-a0a5-e77a41a1b9ee",
+      "name": "Get Thumbnails Examples",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "j1qmlnVLtaZkr0cm",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        440,
+        900
+      ],
+      "id": "11054891-41e6-4984-a4b3-aed7aa8eda0d",
+      "name": "Download Thumbnails Examples",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "j1qmlnVLtaZkr0cm",
+          "name": "Google Drive account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "choices[0].message.content",
+              "renameField": true,
+              "outputFieldName": "Images Description"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        880,
+        700
+      ],
+      "id": "a4bb65e2-7e0b-4d8e-a27e-4d387ffab4e3",
+      "name": "Characters"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "choices[0].message.content",
+              "renameField": true,
+              "outputFieldName": "Thumbnails Description"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        880,
+        900
+      ],
+      "id": "70f8bf0a-3c8a-4b24-867f-66023f6e3a06",
+      "name": "Thumbnails"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2100,
+        780
+      ],
+      "id": "35ac0514-53a5-4e3a-98c1-16c8e334f86e",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "content": "# Get Inputs ( Title & Content to Base on )",
+        "height": 740,
+        "width": 1300,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        500
+      ],
+      "id": "5d745788-b7d7-4ca8-94b0-dae316820212",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Thumbnail Prompts",
+        "height": 740,
+        "width": 860,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        500
+      ],
+      "id": "8d6cc256-183b-4ab0-8826-d2e5d679c7c5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Create & Check Designs",
+        "height": 960,
+        "width": 1980,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2020,
+        500
+      ],
+      "id": "3688dae6-1af2-4388-8e50-c6fd9e0b6497",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate 2 various, slighty different prompts",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=** Purpose **\nGenerate high-impact YouTube thumbnail prompts using the provided video title, creators images, and a proven high-converting visual style. Each prompt must guide an AI system to create a visually compelling thumbnail that boosts click-through rates and aligns with the creator’s visual brand.\n\n** How It Works **\nYou will receive information about multiple images, both for character descriptions and thumbnails descriptions. Based on this information, choose the most proper data to create a high-quality thumbnail based on this video title: \"{{ $('On form submission1').item.json['Video Title'] }}\" Then follow this process:\n\n** Analyze & Remix the Style **\n\n- Treat the visual style template as the base structure.\n- Blend this with the video title, creator image, and emotional tone from the original design.\n- Maintain consistency with the creator’s personality and image tone (e.g., face angle, expression, clothing, colors).\n\n** Build a Prompt for Thumbnail Generation **\n\n- Highlight the video title (use: {{ $('On form submission1').item.json['Video Title'] }} as placeholder).\n- Integrate the creator image naturally and prominently (use: {{ $('Thumbnails').first().json['Thumbnails Description'] }} as placeholder).\n- Maintain the visual and emotional tone of the template (use: {{ $('Characters').item.json['Images Description'] }} as reference).\n- Add 3D generated icon element for the tool mentioned in {{ $('On form submission1').item.json['Video Title'] }} next to the text.\n\nFor Example:\n1.\ntitle: NEW Deepseek Update!\nresult: Add deepseek icon\n\n2.\ntitle: n8n Workflow\nresult: Add n8n icon\n\nIf there is no tool name in the title, don't create it\nEnsure the final result communicates clarity, trust, and visual impact.\n\n** Output Rules **\n\n- Only output 2 thumbnail generation prompts. Don't provide more output items\n- Do not explain the steps or the process.\n- Use placeholders like {{ $('On form submission1').item.json['Video Title'] }} so it works across workflows.\n- Keep the formatting plain (no markdown, no styling).\n- Never mention product names or actual user data — just use placeholders.\n- Do not return multiple versions — generate only one distinct prompt per request.\n- don't include \"prompt1\" or \"prompt2\"\n\n** Sample Use Case **\nYou are given:\n\n- {{ $('Characters').item.json['Images Description'] }} as visual style input\n- {{ $('Thumbnails').first().json['Thumbnails Description'] }} as transparent hero image\n- {{ $('On form submission1').item.json['Video Title'] }} as the main title to feature\n\nYour task is to return two static thumbnail prompt that blends these elements into a unique but consistent, scroll-stopping thumbnail design."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        780
+      ],
+      "id": "89b653ee-53bf-462b-8a48-e58f16764cd6",
+      "name": "Prompt AI Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission1": {
+      "main": [
+        [
+          {
+            "node": "Get Characters",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Thumbnails Examples",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Prompt AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Characters": {
+      "main": [
+        [
+          {
+            "node": "Characters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Designs": {
+      "main": [
+        [
+          {
+            "node": "Thumbnails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image URL": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Image Quality": {
+      "main": [
+        [
+          {
+            "node": "If Image is",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Image is": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Get Image URL",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Drive9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Prompt AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Prompt AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive9": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Analyze Image Quality",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Characters": {
+      "main": [
+        [
+          {
+            "node": "Download Characters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Characters": {
+      "main": [
+        [
+          {
+            "node": "Analyze Characters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Thumbnails Examples": {
+      "main": [
+        [
+          {
+            "node": "Download Thumbnails Examples",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Thumbnails Examples": {
+      "main": [
+        [
+          {
+            "node": "Analyze Designs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Characters": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Thumbnails": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompt AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4933819b-0051-4b4c-afca-a6a9a439144d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f96a7e8659163312cbaf16ad76688747ea79fa6bf8e4ec720c14444abdf2c12c"
+  },
+  "id": "uDOjFFIWomaniGiD",
+  "tags": []
+}

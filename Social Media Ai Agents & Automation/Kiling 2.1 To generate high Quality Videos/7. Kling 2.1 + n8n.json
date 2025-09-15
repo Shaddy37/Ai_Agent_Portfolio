@@ -1,0 +1,958 @@
+{
+  "name": "Kling 2.1 + n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -520,
+        -100
+      ],
+      "id": "14c9d5db-08d5-4d11-966e-8b002e87e6ef",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -280,
+        60
+      ],
+      "id": "6eba18dc-1159-4adb-abe2-212e307a1459",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "0qLMfnxIrfTptc0E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"image_prompt\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -100,
+        60
+      ],
+      "id": "45ed05bc-0f82-40b5-8169-cde798025ef2",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a prompt for a biblical scene ",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=** Purpose **\nYou transform a short-form video idea (inspired by a biblical character or scene, TikTok-vlog style) into a rich, highly descriptive image prompt for an AI image generation tool. Your goal is to keep the viral, relatable, and emotional vibe, but produce a single still image that captures the mood, story, and setting.\n\n** Think Tool Prompt (used before generation) **\n\nHow can I turn this biblical TikTok-style idea and environment into a cinematic AI image prompt that feels relatable, humorous or emotional, and visually stunning as a single image\n\n** Output Requirements **\n\nReturn only the complete, detailed image prompt, no extra text.\nEach image prompt must include:\n\n- Scene description: clear setting with terrain, buildings, light, and key details\n- Character focus: who is in the scene, pose, expression, outfit (biblical era)\n- Atmosphere and texture: light conditions, dust, wind, fabric movement, shadows, imperfections\n- Visual style: cinematic tone, slight vintage softness or analog warmth, realistic and natural composition\n\n** Example Output **\n\nA biblical man stands in front of a half-built wooden ark, pointing toward the sky as if explaining something important. He wears worn ancient robes, his beard slightly unkempt, his expression determined but tired. Around him, muddy ground with scattered tools and straw. The sky is cloudy with soft golden light breaking through. A light breeze lifts the edges of his robe and stirs the straw. The image has a warm, cinematic feel with gentle film grain and natural shadows.\n\n** Formatting Rules **\nTo make sure the output works inside JSON, follow these simple rules:\n\n- don't use emoijs in the text\n- only provide text that is in proper JSON format\n- don't provide \"\" marks inside description\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -280,
+        -100
+      ],
+      "id": "9e95a66f-c2e7-4a86-b4db-f59eb20e186c",
+      "name": "Image Prompt AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        60,
+        60
+      ],
+      "id": "dcb26b36-2cdf-4f0f-81ee-1e538e476029",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "0qLMfnxIrfTptc0E",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"video_prompt\": \"\",\n\"title\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        220,
+        60
+      ],
+      "id": "363e43f5-6d8d-4d9d-b036-e89a9da442b1",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Q3Hqy9m0o79GIwxXEfe7NhgA3JcFgu7EXyUh8B-i0vY",
+          "mode": "list",
+          "cachedResultName": "Kling + n8n Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q3Hqy9m0o79GIwxXEfe7NhgA3JcFgu7EXyUh8B-i0vY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q3Hqy9m0o79GIwxXEfe7NhgA3JcFgu7EXyUh8B-i0vY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "todo"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image Prompt",
+              "displayName": "Image Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Prompt",
+              "displayName": "Video Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image URL",
+              "displayName": "Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        360,
+        -100
+      ],
+      "id": "417119c3-fd6a-4226-b582-a6cc3fc3aa06",
+      "name": "Set Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RNwKb4ui91TeJRRZ",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/flux-pro/v1.1",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $('Image Prompt AI Agent').item.json.output.image_prompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        -140
+      ],
+      "id": "7fe247bc-29b6-4e39-8a0c-5e137b5919d3",
+      "name": "Create Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1MQ9fUHXjxOVTyA6",
+          "name": "Fal AI - Veo3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 45
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        -140
+      ],
+      "id": "1c6143b7-5729-4dfc-af50-3e3ab60e0fb4",
+      "name": "Wait 1 Minute",
+      "webhookId": "3bde937d-7b96-4ccf-b7c1-4804929986eb"
+    },
+    {
+      "parameters": {
+        "amount": 120
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        160
+      ],
+      "id": "966a90ae-5642-44d2-90a1-e1cb756fbd77",
+      "name": "Wait 2 Minutes",
+      "webhookId": "9f8cce96-6bd1-4362-9650-e881235208a6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://queue.fal.run/fal-ai/kling-video/v2.1/standard/image-to-video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "="
+            },
+            {
+              "name": "image_url",
+              "value": "={{ $json.images[0].url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        160
+      ],
+      "id": "17d0f829-378f-4745-9d73-a8541cf3fc48",
+      "name": "Create Video with Kling 2.1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1MQ9fUHXjxOVTyA6",
+          "name": "Fal AI - Veo3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/kling-video/requests/{{ $json.request_id }}/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1000,
+        160
+      ],
+      "id": "6cf2c06b-ef7c-40cb-a4b3-c356dc084009",
+      "name": "Get Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1MQ9fUHXjxOVTyA6",
+          "name": "Fal AI - Veo3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.response_url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        460
+      ],
+      "id": "54b19301-e216-4a91-bc20-ca76fa348aba",
+      "name": "Get Video URL",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1MQ9fUHXjxOVTyA6",
+          "name": "Fal AI - Veo3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Q3Hqy9m0o79GIwxXEfe7NhgA3JcFgu7EXyUh8B-i0vY",
+          "mode": "list",
+          "cachedResultName": "Kling + n8n Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q3Hqy9m0o79GIwxXEfe7NhgA3JcFgu7EXyUh8B-i0vY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q3Hqy9m0o79GIwxXEfe7NhgA3JcFgu7EXyUh8B-i0vY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "done",
+            "Video URL": "={{ $json.video.url }}",
+            "Image URL": "={{ $('Get Image').item.json.images[0].url }}",
+            "Video Prompt": "={{ $('Video Prompt AI Agent').item.json.output.video_prompt }}",
+            "Image Prompt": "={{ $('Image Prompt AI Agent').item.json.output.image_prompt }}",
+            "Title": "={{ $('Video Prompt AI Agent').item.json.output.title }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image Prompt",
+              "displayName": "Image Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video Prompt",
+              "displayName": "Video Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image URL",
+              "displayName": "Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        800,
+        460
+      ],
+      "id": "f42ee2f3-985d-4e0b-89a8-31f4e9899911",
+      "name": "Save Information",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RNwKb4ui91TeJRRZ",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"tiktok\",\n      \"isYourBrand\": false,\n      \"disabledDuet\": false,\n      \"privacyLevel\": \"PUBLIC_TO_EVERYONE\",\n      \"isAiGenerated\": true,\n      \"disabledStitch\": false,\n      \"disabledComments\": false,\n      \"isBrandedContent\": false,\n      \"autoAddMusic\": true\n    },\n  \"content\": {\n    \"text\": \"{{ $('Video Prompt AI Agent').item.json.output.title }}\",\n    \"platform\": \"tiktok\",\n    \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"5757\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -280,
+        460
+      ],
+      "id": "4438bd43-0636-4d4f-b806-617df0974eb7",
+      "name": "Publish on TikTok",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mByFY43KSS8qNYXk",
+          "name": "Blotato"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"youtube\",\n      \"title\": \"{{ $('Video Prompt AI Agent').item.json.output.title }}\",\n      \"privacyStatus\": \"unlisted\",\n      \"shouldNotifySubscribers\": false\n    },\n    \"content\": {\n      \"text\": \"{{ $('Video Prompt AI Agent').item.json.output.title }}\",\n      \"platform\": \"youtube\",\n      \"mediaUrls\": [\"{{ $('Upload to Blotato').item.json.url }}\"]\n    },\n    \"accountId\": \"4416\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        460
+      ],
+      "id": "7bf7fec4-ce46-4622-bc6e-c008bca0da2a",
+      "name": "Publish on Youtube Shorts",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mByFY43KSS8qNYXk",
+          "name": "Blotato"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a short cinematic video prompt based on the following biblical image prompt: {{ $json.output.image_prompt }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=** Purpose **\nYou transform a detailed biblical image prompt into a cinematic video prompt and simple title designed for short-form AI video tools. Your goal is to expand the static image into a living scene by describing motion, atmosphere, pacing, camera work, and subtle story dynamics while keeping the same mood and style.\n\n** Think Tool Prompt (used before generation) **\nHow can I take this vivid biblical image description and turn it into an immersive, emotionally engaging video scene with clear camera movement, live action elements, and a short-form cinematic feel\n\n\n** Input **\nYou receive one field:\n\nimage_prompt\n\n\n** Output Requirements **\nReturn only the complete, detailed video prompt and title, no extra text.\n\nEach video prompt must include:\n- Scene expansion: build on the static image to add motion, action, and unfolding details\n- Character focus: describe what the character does, subtle expressions, gestures, or interactions\n- Camera movement: specify one cinematic motion (e.g. slow push-in, handheld tracking, dolly backward, orbit)\n- Light and atmosphere: match the original lighting, but enrich with dynamic elements like wind, moving shadows, or changing clouds\n- Visual style: keep a cinematic, slightly vintage or analog warmth, realistic texture, short-form pacing\n\n\n** Example Output **\n\"prompt\" A biblical man stands in front of a half-built wooden ark, gesturing passionately toward the sky as dark clouds slowly drift overhead. He shifts his stance, pointing back to the unfinished structure, his robe edges fluttering in the breeze. The camera follows him with a slow handheld tracking shot as he moves side to side, his voice unheard but his urgency clear. Mud and straw move underfoot while distant villagers pause to watch. Soft golden rays break through the clouds, creating shifting highlights on the ark’s wooden beams. The scene has a warm, cinematic tone with natural textures and gentle vintage softness.\n\n\"title\" This Man Stood Alone With His Unfinished Ark and a Message Nobody Wanted to Hear\n\n** Formatting Rules **\nTo make sure the output works inside JSON, follow these simple rules:\n\n- don't use emoijs in the text\n- only provide text that is in proper JSON format\n- don't provide \"\" marks inside description\n- no line breaks, don't use \\n, just provide plain text"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        40,
+        -100
+      ],
+      "id": "baace034-9131-41b7-8258-53d362bdb5a8",
+      "name": "Video Prompt AI Agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/media",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $('Get Video URL').item.json.video.url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1000,
+        460
+      ],
+      "id": "6aac9dda-b3f6-42d0-813c-8c1f26458058",
+      "name": "Upload to Blotato",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mByFY43KSS8qNYXk",
+          "name": "Blotato"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Create Prompts",
+        "height": 540,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        -220
+      ],
+      "id": "914ad0f2-ff08-4c8b-8676-ffca53e7c615",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Create Image",
+        "height": 280,
+        "width": 620,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        540,
+        -220
+      ],
+      "id": "aede0bc7-3e85-4f1a-b273-a132de2bf4fe",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.response_url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1000,
+        -140
+      ],
+      "id": "78894e13-bf11-4636-b0b6-4ef85d93ba89",
+      "name": "Get Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1MQ9fUHXjxOVTyA6",
+          "name": "Fal AI - Veo3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Image-to-Video",
+        "height": 280,
+        "width": 620,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        540,
+        80
+      ],
+      "id": "ad890d2b-ff89-4f62-9c76-d613e59203a8",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Prepare Content",
+        "height": 280,
+        "width": 620,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        540,
+        380
+      ],
+      "id": "2fc2cfc6-b0fc-41cb-8f73-ee871b0e6e45",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Publish on Social Media",
+        "height": 320,
+        "width": 880,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        340
+      ],
+      "id": "18cbcc23-0ce5-49ed-80bc-c4a18964369d",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Edit Fields').item.json.facebook }}\",\n    \"target\": {\n      \"targetType\": \"facebook\",\n      \"pageId\": \"{{ $('Edit Fields').item.json.facebook_page_id }}\"\n    },\n    \"content\": {\n      \"text\": \"{{ $('Create an Idea AI Agent').item.json.output.description }}\",\n      \"mediaUrls\": [\"{{ $('Upload to Blotato').item.json.url }}\"],\n      \"platform\": \"facebook\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        460
+      ],
+      "id": "1fb7f4c0-c62e-48e6-a26f-612928f9596e",
+      "name": "Facebook",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mByFY43KSS8qNYXk",
+          "name": "Blotato"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"linkedin\"\n    },\n    \"content\": {\n      \"text\": \"{{ $('Create an Idea AI Agent').item.json.output.description }}\",\n      \"platform\": \"linkedin\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"{{ $('Edit Fields').item.json.linkedin }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        460
+      ],
+      "id": "ab08fb69-1f58-4b15-b580-fed3b855a339",
+      "name": "Linkedin",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mByFY43KSS8qNYXk",
+          "name": "Blotato"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Prompt AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Image Prompt AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Video Prompt AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Video Prompt AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Video Prompt AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Status": {
+      "main": [
+        [
+          {
+            "node": "Create Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Image": {
+      "main": [
+        [
+          {
+            "node": "Wait 1 Minute",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1 Minute": {
+      "main": [
+        [
+          {
+            "node": "Get Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Get Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Video with Kling 2.1": {
+      "main": [
+        [
+          {
+            "node": "Wait 2 Minutes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video": {
+      "main": [
+        [
+          {
+            "node": "Get Video URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video URL": {
+      "main": [
+        [
+          {
+            "node": "Save Information",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Information": {
+      "main": [
+        [
+          {
+            "node": "Upload to Blotato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish on TikTok": {
+      "main": [
+        [
+          {
+            "node": "Publish on Youtube Shorts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Prompt AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Blotato": {
+      "main": [
+        [
+          {
+            "node": "Publish on TikTok",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image": {
+      "main": [
+        [
+          {
+            "node": "Create Video with Kling 2.1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish on Youtube Shorts": {
+      "main": [
+        [
+          {
+            "node": "Facebook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook": {
+      "main": [
+        [
+          {
+            "node": "Linkedin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "23f6291b-64f1-4b8d-ae73-9506bd20d211",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f96a7e8659163312cbaf16ad76688747ea79fa6bf8e4ec720c14444abdf2c12c"
+  },
+  "id": "ZqmfQd1VZpj270dR",
+  "tags": []
+}

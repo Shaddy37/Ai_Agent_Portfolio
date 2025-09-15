@@ -1,0 +1,12 @@
+Create an AI-powered image generator app. The interface should be clean, modern, and visually appealing. Users should be able to type in a description of the image they want and click a button to generate it.
+
+To generate the image, send a POST request to this endpoint:
+https://your-n8n-webhook-url.com/webhook/image-gen
+
+The request body should look like this:
+
+{
+  "prompt": "a high-resolution portrait of a man wearing a suit"
+}
+
+The API will return the generated image as a binary file.

@@ -1,0 +1,885 @@
+{
+  "name": "Seedance",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/mmaudio-v2 ",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "= {\n        \"prompt\": \"ASMR Soothing sound effects. {{ $('Prompt Writer AI Agent').item.json.output.Sound }}\",\n        \"duration\": 10,\n        \"video_url\": \"{{ $json.data.outputs[0]}}\"\n\n\n\n  }\n",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 2000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        -140
+      ],
+      "id": "a2842c4b-991a-41c5-acb9-a2d98dd26440",
+      "name": "Create Sounds",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NiNWtcZX0s7mKTvr",
+          "name": "FalAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/mmaudio-v2/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2560,
+        -140
+      ],
+      "id": "3c36922e-bcbf-45b8-bb57-2e30ee6e22db",
+      "name": "Get Sounds",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NiNWtcZX0s7mKTvr",
+          "name": "FalAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2360,
+        -140
+      ],
+      "id": "54a394d3-4b4f-4d21-82d0-a753c78a8627",
+      "name": "Wait for Sounds",
+      "webhookId": "e8f621a2-912d-43ad-ac67-0f135a441870"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/ffmpeg-api/compose",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"tracks\": [\n    {\n      \"id\": \"1\",\n      \"type\": \"video\",\n      \"keyframes\": [\n        { \"url\": \"{{ $json.video_urls[0] }}\", \"timestamp\": 0, \"duration\": 10 },\n        { \"url\": \"{{ $json.video_urls[1] }}\", \"timestamp\": 10, \"duration\": 10 },\n        { \"url\": \"{{ $json.video_urls[2] }}\", \"timestamp\": 20, \"duration\": 10 }\n      ]\n    }\n  ]\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 2000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3160,
+        80
+      ],
+      "id": "a4769e33-0df7-4562-9b07-201dddab0fb8",
+      "name": "Sequence Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NiNWtcZX0s7mKTvr",
+          "name": "FalAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/ffmpeg-api/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3560,
+        100
+      ],
+      "id": "e9e1fd4a-06f9-4913-b7f0-3834744b97f4",
+      "name": "Get Final Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NiNWtcZX0s7mKTvr",
+          "name": "FalAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3360,
+        -140
+      ],
+      "id": "b19cdf9c-df9e-43d2-9f26-a04de5915af8",
+      "name": "Wait for Final Video",
+      "webhookId": "4d45095b-ac57-450c-a05c-0fba53294131"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        680,
+        100
+      ],
+      "id": "917cd811-d1ae-4dea-81e3-ad9f1530ae36",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        100
+      ],
+      "id": "94343c2c-e9f6-4374-9424-778df6e22852",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULctv1aW08WV7LUC",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"Caption\": \"Diver Removes Nets Off Whale 🐋 #whalerescue #marinelife #oceanrescue #seahelpers #love #nature #instagood #explore #viral #savenature #oceanguardians #cleanoceans\",\n    \"Idea\": \"Diver carefully cuts tangled net from distressed whale in open sea\",\n    \"Environment\": \"Open ocean, sunlight beams through water, diver and whale, cinematic realism\",\n    \"Sound\": \"Primary sound description under 15 words\",\n    \"Status\": \"for production\"\n  }\n]\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        100
+      ],
+      "id": "1031e491-9830-4b51-b581-884a39be0a12",
+      "name": "Parser"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -140,
+        -140
+      ],
+      "id": "bf0ad447-66c9-40cd-9241-37813cfe3bff",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Idea\": \"An obsidian rock being sliced with a shimmering knife\",\n  \"Environment\": \"Clean studio table, subtle light reflections\",\n  \"Sound\": \"Crisp slicing, deep grinding, and delicate crumbling\",\n  \"Scene 1\": \"Extreme macro shot: a razor-sharp, polished knife blade presses into the dark, granular surface of an obsidian rock, just beginning to indent.\",\n  \"Scene 2\": \"Close-up: fine, iridescent dust particles erupt from the point of contact as the blade cuts deeper into the obsidian, catching the studio light.\",\n  \"Scene 3\": \"Mid-shot: the knife, held perfectly steady, has formed a shallow, clean groove across the obsidian's shimmering surface, revealing a new, smooth texture.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        540,
+        100
+      ],
+      "id": "1a0ff67b-bb26-4036-9ae0-28ae31c4894f",
+      "name": "Parser2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wavespeed.ai/api/v3/bytedance/seedance-v1-pro-t2v-720p",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"aspect_ratio\": \"9:16\",\n  \"duration\": 10,\n  \"prompt\": \"VIDEO THEME: {{ $('Prompt Writer AI Agent').item.json.output.Idea }} | WHAT HAPPENS IN THE VIDEO: {{ $json.description }} | WHERE THE VIDEO IS SHOT: {{ $('Prompt Writer AI Agent').item.json.output.Environment }}\"\n}\n",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 3000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1260,
+        -140
+      ],
+      "id": "fc8f2e4c-3df0-469f-a3c1-0852d5ae6611",
+      "name": "Create Clips",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kzulchTqTpnQ51KD",
+          "name": "WaveCred"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 300
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1460,
+        -140
+      ],
+      "id": "239b774a-01be-4c88-92ba-947c739cc34e",
+      "name": "Wait for Clips",
+      "webhookId": "3ef8e370-50cf-489e-8775-bf502ce60a26"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.wavespeed.ai/api/v3/predictions/{{ $json.data.id }}/result",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1660,
+        -140
+      ],
+      "id": "27ffd646-a7ca-444d-82e8-f0d7871c7e21",
+      "name": "Get Clips",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kzulchTqTpnQ51KD",
+          "name": "WaveCred"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Produce Clips",
+        "height": 640,
+        "width": 860,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        -360
+      ],
+      "id": "89e780fe-980f-4dcd-85b2-8da00058d4c6",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Ideas",
+        "height": 640,
+        "width": 1040,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -360
+      ],
+      "id": "8e7a3c10-02e4-48cf-af12-8ceee8a1c231",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Sounds",
+        "height": 640,
+        "width": 860,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1980,
+        -360
+      ],
+      "id": "a5d2b1bf-ce9f-4f18-872b-5b1b84ed2cfd",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "## Connect Clips",
+        "height": 640,
+        "width": 1100,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2920,
+        -360
+      ],
+      "id": "7f735869-44c0-4bb2-b23d-b46c5a671905",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1n2zcWkF9TKaoEtmVPCn4KAAzzQpzl1AdTghJNPx3nlU",
+          "mode": "list",
+          "cachedResultName": "Seedance in n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1n2zcWkF9TKaoEtmVPCn4KAAzzQpzl1AdTghJNPx3nlU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1n2zcWkF9TKaoEtmVPCn4KAAzzQpzl1AdTghJNPx3nlU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "idea": "={{ $json.output[0].Idea }}",
+            "caption": "={{ $json.output[0].Caption }}",
+            "id": "==ROW()-1",
+            "environment_prompt": "={{ $json.output[0].Environment }}",
+            "production": "={{ $json.output[0].Status }}",
+            "sound_prompt": "={{ $json.output[0].Sound }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "idea",
+              "displayName": "idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "production",
+              "displayName": "production",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "environment_prompt",
+              "displayName": "environment_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sound_prompt",
+              "displayName": "sound_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_output",
+              "displayName": "final_output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        320,
+        -140
+      ],
+      "id": "4728a157-917b-4d5c-b236-3ff21074d35a",
+      "name": "Save the Idea",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TQHNRwbFTxYXwnxr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "[[ fox escaping danger in a dense forest ]]\n\nUse the Think tool to review your output",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=**Role**: You are an AI designed to generate 1 immersive, realistic idea based on a user-provided topic. Your output must be formatted as a JSON array (single line) and follow all the rules below exactly.\n\n***\nRULES:\n\nOnly return 1 idea at a time.\n\nThe user will provide a key topic (e.g. \"fox escaping danger in forest\", \"owl gliding at dusk\".\n\n\nThe Idea must:\n\nBe under 13 words.\n\nMust describe a viral-worthy action or moment from the topic.  \n\nThe Caption must be:\n\nShort, punchy, and viral-friendly.\n\nInclude one relevant emoji.\n\nInclude exactly 12 hashtags in this order:\n** 4 topic-relevant hashtags\n** 4 all-time most popular hashtags\n** 4 currently trending hashtags (based on live research)\n\nAll hashtags must be lowercase.\n\nSet Status to \"for production\" (always).\n\nThe Environment must:\n\nBe under 20 words.\n\nMatch the action in the Idea exactly.\n\nClearly describe:\n\nlocation, key visuals/background, stylistic note (macro, cinematic slow-mo, etc.).\n\n\nThe Sound must:\n\nBe under 15 words.\n\nDescribe the primary sound that makes sense to happen in the video. This will be fed to a sound model later on.\n\n\n***\nOUTPUT FORMAT (single-line JSON array):\n\n[\n  {\n    \"Caption\": \"Short viral title with emoji #4_topic_hashtags #4_all_time_popular_hashtags #4_trending_hashtags\",\n    \"Idea\": \"Short idea under 13 words\",\n    \"Environment\": \"Brief vivid setting under 20 words matching the action\",\n    \"Sound\": \"Primary sound description under 15 words\",\n    \"Status\": \"for production\"\n  }\n]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        40,
+        -140
+      ],
+      "id": "56071ad1-06fa-468f-a13c-393776a1446b",
+      "name": "Ideas Generator AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Give me 3 video prompts based on the previous idea\n\nUse the Think tool to review your output",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=**Role**: You are a prompt-generation AI specializing in cinematic wildlife sequences.  \nGenerate a multi-scene video prompt that vividly follows a fox escaping danger through a dense forest.  \nYour writing must convey crisp, realistic movement, rich environmental detail, and immersive sensory cues.\n\nStyle Guidelines\n• Sharp cinematic realism – think high-end nature-documentary footage.  \n• Macro and mid-shot details of the fox’s fur, muscles, and forest textures.  \n• The fox must remain in motion or poised for motion; never idle for an entire scene.  \n• Use camera terms (e.g. aerial tracking, over-the-shoulder, low-angle ground shot).  \n• Convey light changes, dust, leaves, and subtle atmospheric particles visually.  \n• Any ASMR-relevant sounds (paw-steps, rustling leaves, breath) should be implied via visuals only.\n\nEach Scene MUST Include  \n✅ The fox (central subject)  \n✅ Immediate environment (forest floor, foliage, shafts of light, obstacles)  \n✅ A clear action or reaction that shows tension or escape  \n✅ Camera perspective cues\n\nShow Through Description  \n• Forest density, lighting shifts, mist, moisture, dirt scatter.  \n• The fox’s physical response – muscles tensing, ears flicking, breathing vapor.  \n• Ground interaction – leaves crunching, soil kicking up, branch snaps.  \n• Atmosphere – floating dust, insects, sunbeams, drifting fog.\n\nTone  \n• Clean, observational, and visual.  \n• Avoid poetic metaphors or overt storytelling commentary.  \n• No fantasy elements.\n\n\nLength:\n\nEach scene must be between **1,000 and 2,000 characters**.  \nNo shallow or repetitive scenes — each must be immersive, descriptive, and specific.  \nEach scene should explore a distinct phase of the escape, a different camera perspective, or a new sensory detail.\n\nInputs:\n\nIdea: \"{{ $json.idea }}\"\nEnvironment: \"{{ $json.environment_prompt }}\"\nSound: \"{{ $json.sound_prompt }}\"\n\nFormat:\n\nIdea: \"...\"\nEnvironment: \"...\"\nSound: \"...\"\n\nScene 1: \"...\"\nScene 2: \"...\"\nScene 3: \"...\"\nScene 4: \"...\"\nScene 5: \"...\"\nScene 6: \"...\"\nScene 7: \"...\"\nScene 8: \"...\"\nScene 9: \"...\"\nScene 10: \"...\"\nScene 11: \"...\"\nScene 12: \"...\"\nScene 13: \"...\"\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        440,
+        -140
+      ],
+      "id": "8f9ff03a-e583-4510-ad9e-2a7538bb1e93",
+      "name": "Prompt Writer AI Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "function findSceneEntries(obj) {\n  const scenes = [];\n\n  for (const [key, value] of Object.entries(obj)) {\n    if (key.toLowerCase().startsWith(\"scene\") && typeof value === \"string\") {\n      scenes.push(value);\n    } else if (typeof value === \"object\" && value !== null) {\n      scenes.push(...findSceneEntries(value));\n    }\n  }\n\n  return scenes;\n}\n\nlet output = [];\n\ntry {\n  const inputData = items[0].json;\n  const scenes = findSceneEntries(inputData);\n\n  if (scenes.length === 0) {\n    throw new Error(\"No scene keys found at any level.\");\n  }\n\n  output = scenes.map(scene => ({ description: scene }));\n} catch (e) {\n  throw new Error(\"Could not extract scenes properly. Details: \" + e.message);\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        -140
+      ],
+      "id": "a7efb4b4-474a-4205-8c43-9d6a718b696c",
+      "name": "Scene Extractor"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    video_urls: items.map(item => item.json.video.url)\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2960,
+        -140
+      ],
+      "id": "b595e998-5bcc-43e4-b500-26c1e57210f3",
+      "name": "Video URL Collector"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1n2zcWkF9TKaoEtmVPCn4KAAzzQpzl1AdTghJNPx3nlU",
+          "mode": "list",
+          "cachedResultName": "Seedance in n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1n2zcWkF9TKaoEtmVPCn4KAAzzQpzl1AdTghJNPx3nlU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1n2zcWkF9TKaoEtmVPCn4KAAzzQpzl1AdTghJNPx3nlU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "idea": "={{ $('Save the Idea').first().json.idea }}",
+            "production": "done",
+            "final_output": "={{ $json.video_url }}"
+          },
+          "matchingColumns": [
+            "idea"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "idea",
+              "displayName": "idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "production",
+              "displayName": "production",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "environment_prompt",
+              "displayName": "environment_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_output",
+              "displayName": "final_output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3760,
+        -140
+      ],
+      "id": "2e1c6c6a-630a-4472-bec3-2314d977dc21",
+      "name": "Save Final Video",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TQHNRwbFTxYXwnxr",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create Sounds": {
+      "main": [
+        [
+          {
+            "node": "Wait for Sounds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Sounds": {
+      "main": [
+        [
+          {
+            "node": "Get Sounds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sequence Video": {
+      "main": [
+        [
+          {
+            "node": "Wait for Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Final Video": {
+      "main": [
+        [
+          {
+            "node": "Get Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ideas Generator AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Prompt Writer AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ideas Generator AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Prompt Writer AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Ideas Generator AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Ideas Generator AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sounds": {
+      "main": [
+        [
+          {
+            "node": "Video URL Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Final Video": {
+      "main": [
+        [
+          {
+            "node": "Save Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Prompt Writer AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Clips": {
+      "main": [
+        [
+          {
+            "node": "Wait for Clips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Clips": {
+      "main": [
+        [
+          {
+            "node": "Get Clips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Clips": {
+      "main": [
+        [
+          {
+            "node": "Create Sounds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save the Idea": {
+      "main": [
+        [
+          {
+            "node": "Prompt Writer AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ideas Generator AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Save the Idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompt Writer AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Scene Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scene Extractor": {
+      "main": [
+        [
+          {
+            "node": "Create Clips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video URL Collector": {
+      "main": [
+        [
+          {
+            "node": "Sequence Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "abfe4db4-6e3e-434d-ab4b-58a741f99e35",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ae59e6b831344dba624c99cbe778a4bc47150f8e64de86a8011d15bac8e58c21"
+  },
+  "id": "0oEksQi9erDRIYF3",
+  "tags": []
+}

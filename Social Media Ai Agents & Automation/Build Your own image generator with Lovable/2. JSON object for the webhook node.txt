@@ -1,0 +1,7 @@
+[
+  {
+    "body": {
+      "prompt": " a raccoon DJ at a rooftop party"
+    }
+  }
+]

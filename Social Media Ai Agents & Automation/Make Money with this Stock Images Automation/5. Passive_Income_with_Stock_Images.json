@@ -1,0 +1,492 @@
+{
+  "name": "Passive Income with Stock Images",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        0
+      ],
+      "id": "90e24dc0-6df4-4aee-b3fe-77a06c88a7d7",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        700,
+        0
+      ],
+      "id": "9cb0b7f7-43d4-4e56-ae06-45d159e9c82c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract the JSON response from the previous step\nconst inputData = $input.first().json.content;\n\n// Strip out possible markdown wrappers like ```json\nconst sanitizedData = inputData.replace(/```json\\n\\n/g, '');\n\ntry {\n  // Attempt to parse the JSON string\n  const dataObjects = JSON.parse(sanitizedData);\n\n  // Format each object: convert keywords array into a comma-separated string\n  const result = dataObjects.map(entry => ({\n    json: {\n      Title: entry.Title,\n      Description: entry.Description,\n      Keywords: entry.Keywords.join(', ')\n    }\n  }));\n\n  return result;\n} catch (err) {\n  // Throw an error if the JSON is invalid\n  throw new Error(\"JSON parsing failed: \" + err.message);\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        180
+      ],
+      "id": "ad580c69-397d-4d63-a8a5-6db26ecd5e10",
+      "name": "Array to String"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1k9qStpXZAa19TEOGxpxzTWLaZxv0EJUl",
+            "mode": "list",
+            "cachedResultName": "Upload Data Here | Adobe Stock",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1k9qStpXZAa19TEOGxpxzTWLaZxv0EJUl"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        200,
+        0
+      ],
+      "id": "072f17f0-d6a5-4f52-96f7-49ee77e588bb",
+      "name": "Search for Images",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "lWWlmCXTllWWEiUS",
+          "name": "Google Drive account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        400,
+        0
+      ],
+      "id": "421839e2-e0f8-4ce8-a5a4-36c3bb8a0506",
+      "name": "Download Images",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "lWWlmCXTllWWEiUS",
+          "name": "Google Drive account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "=** Task **\nCreate metadata for a single image in valid JSON format. The output must be a JSON array containing one or more objects, where each object includes:\n\n\n\"Title\" – A descriptive name for the image. Between 50 - 80 characters\n\n\"Keywords\" – A list of 55 keywords, each relevant to the image content, with a max length of 30 characters each\n\n\n** Format Requirements **\n\n- Return a valid JSON array (no markdown or extra text)\n\n- The Keywords field must always include exactly 55 strings\n\n- Each keyword string must be under or equal to 30 characters\n\n- Follow strict JSON syntax\n\n** Example Output **\n\n[\n  {\n    \"Title\": \"Sunset Over the Ocean\",\n    \"Keywords\": [\"sunset\", \"ocean\", \"sea\", \"water\", \"golden hour\", \"nature\", \"scenic\", \"landscape\", \"travel\", \"peaceful\", \"sun\", \"sky\", \"evening\", \"coast\", \"waves\", \"reflection\", \"tranquil\", \"serene\", \"beach\", \"clouds\", \"light\", \"summer\", \"dusk\", \"horizon\", \"natural beauty\"]\n  }\n]\n\n** Important **\nOnly return the JSON array. Do not include explanations, formatting syntax, or headers.",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1000,
+        180
+      ],
+      "id": "c008cfcb-8d7d-4bf3-8ede-5baca0b47f94",
+      "name": "Create Title & Keywords",
+      "credentials": {
+        "openAiApi": {
+          "id": "QivR7SxB24l8KozV",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1HCNfC7h_qk8goQh5DOTw0pMxcu0Qe3U7fVzldop7qzg",
+          "mode": "list",
+          "cachedResultName": "Adobe Stock",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HCNfC7h_qk8goQh5DOTw0pMxcu0Qe3U7fVzldop7qzg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HCNfC7h_qk8goQh5DOTw0pMxcu0Qe3U7fVzldop7qzg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $json.Title }}",
+            "Keywords": "={{ $json.Keywords }}",
+            "Filename": "={{ $('Loop Over Items').item.json.name }}",
+            "Category": "1"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Filename",
+              "displayName": "Filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Releases",
+              "displayName": "Releases",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1400,
+        180
+      ],
+      "id": "73f2930b-7400-44ff-82a4-df974a067147",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RNwKb4ui91TeJRRZ",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Search for Images').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1700,
+        180
+      ],
+      "id": "82f206a9-5202-4945-9310-0e7b5224d5d1",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "lWWlmCXTllWWEiUS",
+          "name": "Google Drive account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        -100
+      ],
+      "id": "e9f5c583-cade-4546-98cf-831aee1e0047",
+      "name": "Wait for 3 Minutes",
+      "webhookId": "0ec36bb6-dc41-4dc1-a013-16853edfb45b"
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "value": "1HCNfC7h_qk8goQh5DOTw0pMxcu0Qe3U7fVzldop7qzg",
+          "mode": "list",
+          "cachedResultName": "Adobe Stock",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HCNfC7h_qk8goQh5DOTw0pMxcu0Qe3U7fVzldop7qzg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HCNfC7h_qk8goQh5DOTw0pMxcu0Qe3U7fVzldop7qzg/edit#gid=0"
+        },
+        "keepFirstRow": true
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        -100
+      ],
+      "id": "88659757-237f-46d4-98cc-cc5272ed5a2f",
+      "name": "Clear Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RNwKb4ui91TeJRRZ",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Get Images",
+        "height": 240,
+        "width": 420
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        140,
+        -60
+      ],
+      "id": "9130f967-37f6-4c12-90f8-9d5b1ba621d7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Create Titles & Keywords",
+        "height": 260,
+        "width": 620,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        80
+      ],
+      "id": "a6439d50-b95f-464e-b356-87031bce88f0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Delete Images",
+        "height": 260,
+        "width": 320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        80
+      ],
+      "id": "ded6408f-e46c-4907-af64-e4fcbaf59880",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Delete Data & Prepare for Next Content",
+        "height": 260,
+        "width": 620,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        -200
+      ],
+      "id": "5c95e0fb-f2be-4d19-8d01-35854573e256",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Repeat for Each Image",
+        "height": 240,
+        "width": 340,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        580,
+        -60
+      ],
+      "id": "ac24fab1-1f5b-498d-becc-812da2cabe22",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search for Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Wait for 3 Minutes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Title & Keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Array to String": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search for Images": {
+      "main": [
+        [
+          {
+            "node": "Download Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Images": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Title & Keywords": {
+      "main": [
+        [
+          {
+            "node": "Array to String",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for 3 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Clear Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "db2c197d-18cc-435a-8c8a-eab51d4b2b93",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f96a7e8659163312cbaf16ad76688747ea79fa6bf8e4ec720c14444abdf2c12c"
+  },
+  "id": "L05uXdIRJvWEMTIh",
+  "tags": []
+}
