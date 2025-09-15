@@ -22,7 +22,7 @@ Building intelligent automation solutions that eliminate manual work and scale b
 ![n8n](https://img.shields.io/badge/-n8n-EA4B71?style=flat&logo=n8n&logoColor=white)
 
 ### 📊 GitHub Stats
-![Your GitHub stats](https://github-readme-stats.vercel.app/api?username=ShadabShams&show_icons=true&theme=dark)
+![Shadab Shams's Stats](https://github-readme-stats.vercel.app/api?username=Shaddy37&theme=gruvbox&show_icons=true&hide_border=false&count_private=true) ![Shaddy37's Streak](https://github-readme-streak-stats.herokuapp.com/?user=Shaddy37&theme=gruvbox&hide_border=false)
 
 ### 🎯 Featured Projects
 | Project | Description | Tech Stack | Impact |
