@@ -1,0 +1,823 @@
+{
+  "name": "Business Ideas AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -60,
+        160
+      ],
+      "id": "91571cfc-1be4-490e-83a8-7572bba24ff2",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "subreddit": "startups",
+        "limit": 20,
+        "filters": {
+          "category": "hot"
+        }
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        220,
+        -200
+      ],
+      "id": "a50fc337-cbd1-4cf4-b202-c119aaed8ffb",
+      "name": "Get many posts",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "ShDLPh3Umq2zcIuR",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "subreddit": "artificial",
+        "limit": 20,
+        "filters": {
+          "category": "hot"
+        }
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        220,
+        -20
+      ],
+      "id": "df039395-a59a-4d44-93d9-2a8fdcd892cf",
+      "name": "Get many posts1",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "ShDLPh3Umq2zcIuR",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "subreddit": "SideProject",
+        "limit": 20,
+        "filters": {
+          "category": "hot"
+        }
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "id": "573031c5-3778-48d6-92f6-bb1c51c92131",
+      "name": "Get many posts2",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "ShDLPh3Umq2zcIuR",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "subreddit": "SaaS",
+        "limit": 20,
+        "filters": {
+          "category": "hot"
+        }
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        220,
+        480
+      ],
+      "id": "fb441d67-2985-4791-8770-9e58ad2ae4a5",
+      "name": "Get many posts3",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "ShDLPh3Umq2zcIuR",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7cd875da-5565-455a-bee2-c2fce2bddd52",
+              "name": "selftext",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            },
+            {
+              "id": "4febea14-56d3-4dd2-a2e4-2e01e9c8ab71",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        -200
+      ],
+      "id": "5c5440c9-e484-477d-973a-37e2725f71c8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7cd875da-5565-455a-bee2-c2fce2bddd52",
+              "name": "selftext",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            },
+            {
+              "id": "4febea14-56d3-4dd2-a2e4-2e01e9c8ab71",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        -20
+      ],
+      "id": "98bed336-0a88-447f-92d5-d25d94ff1800",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7cd875da-5565-455a-bee2-c2fce2bddd52",
+              "name": "selftext",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            },
+            {
+              "id": "4febea14-56d3-4dd2-a2e4-2e01e9c8ab71",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        300
+      ],
+      "id": "1da25765-878f-49f4-b9d8-886c5640270f",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7cd875da-5565-455a-bee2-c2fce2bddd52",
+              "name": "selftext",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            },
+            {
+              "id": "4febea14-56d3-4dd2-a2e4-2e01e9c8ab71",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        480
+      ],
+      "id": "290b11c7-b2c1-4ba3-bd20-7e0277474ed4",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        840,
+        120
+      ],
+      "id": "07f16c28-d3a9-4e8a-9473-9025cc7f7a2f",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        140
+      ],
+      "id": "d7ae7472-103d-4b21-9c4b-79c8e4cc3fcd",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "message.content.ideas",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        140
+      ],
+      "id": "78b93def-8e5d-4d73-9223-f40f3011aab3",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=** Purpose **\nYou are a Startup Idea Extractor.\n\n\n** You will receive an array of Reddit posts, each with these fields:\n\n- title\n- selftext (the body)\n\nYour job is to identify all concrete business or startup ideas mentioned. If the author says the idea worked for them, extract that success detail.\n\n** For each post with at least one idea, output an object with:\n\n- startupIdea: one-sentence summary of the idea\n- success: true if the author says it succeeded (e.g. “I made $10k”, “it grew to 100 users”), otherwise false\n- successDetails: the exact phrase or metric if success=true, otherwise null\n- goodIdea: whether you think it’s a good idea or not, based on your knowledge of market saturation, viability, and size\n- pros: one sentence describing possible benefits\n- cons: one sentence describing possible limitations\n\nWrap all objects in a top-level JSON array called “ideas.”\n\nOutput only valid JSON—no explanations or extra text.\n\nUse the input data from: {{ JSON.stringify ($json.data) }}."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1240,
+        140
+      ],
+      "id": "1cb036ec-4709-43d8-9d8e-667cce76c2a8",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "GGNW9JnvMJrZ8lu8",
+          "name": "OpenAi account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1B5g-mpXhqHy4negDMz6f2R7OqydLnjIlpQOTEfsDb80",
+          "mode": "list",
+          "cachedResultName": "Startup Ideas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1B5g-mpXhqHy4negDMz6f2R7OqydLnjIlpQOTEfsDb80/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1B5g-mpXhqHy4negDMz6f2R7OqydLnjIlpQOTEfsDb80/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Startup Idea": "={{ $json.startupIdea }}",
+            "Success or not?": "={{ $json.success }}",
+            " Details": "={{ $json.successDetails }}",
+            "Is it a Good Idea?": "={{ $json.goodIdea }}",
+            "Pros": "={{ $json.pros }}",
+            "Cons": "={{ $json.cons }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Startup Idea",
+              "displayName": "Startup Idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Success or not?",
+              "displayName": "Success or not?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " Details",
+              "displayName": " Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Is it a Good Idea?",
+              "displayName": "Is it a Good Idea?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pros",
+              "displayName": "Pros",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cons",
+              "displayName": "Cons",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1780,
+        140
+      ],
+      "id": "9051f784-adaa-4b2e-8492-c0d91415f0cd",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RNwKb4ui91TeJRRZ",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Generating Business Ideas",
+        "formDescription": "Select a subreddit to focus on.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Subreddit",
+              "placeholder": "homeowner",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "keywords",
+              "placeholder": "issues",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -60,
+        1060
+      ],
+      "id": "36b54261-bef2-4f0f-9041-8504acba4071",
+      "name": "On form submission",
+      "webhookId": "ba5b7058-ec80-4de2-862a-39485097133b"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "subreddit": "={{ $json.Subreddit }}",
+        "keyword": "={{ $json.keywords }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        220,
+        1060
+      ],
+      "id": "2e804f64-b02e-4e06-807d-fae16ca4e7ce",
+      "name": "Search for a post",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "ShDLPh3Umq2zcIuR",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "667b03f8-6e67-431c-8d38-6cf2f688de5d",
+              "name": "selftext",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            },
+            {
+              "id": "ec9697a4-5bd4-43cc-9e92-eb04a88c13c4",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        1060
+      ],
+      "id": "b5f9d02f-2379-4fc4-95a7-a1831f4e3128",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1060
+      ],
+      "id": "459dd02f-1ab2-4321-b41f-812de39d76c3",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an expert at generating innovative business ideas. You will receive a batch of Reddit posts pulled from:\nr/{{ $('On form submission').item.json.Subreddit }}\nThese posts match the search: “{{ $('On form submission').item.json.keywords }}”.\nEach post includes a title and a selftext.\n\n** Your job is as follows:\n\n1. Analyze the content of these posts and identify up to 5 clear and distinct pain points shared by users.\n2. For every pain point, generate 1 to 2 strong business ideas that directly address the issue.\n3. Write an email summarizing the problems and proposed solutions.\n\n\nOnly return a properly formatted JSON object with the structure below:\n\n- emailSubject: A subject line like “Business ideas for r/{{ $('On form submission').item.json.Subreddit }}”\n- emailBody: A clear, friendly email that:\n\n  - Summarizes each identified pain point\n  - Presents matching business ideas beneath each point\n  - Ends with a prompt for next steps or feedback\n\n\nThe email body must be in HTML format with appropriate line breaks, bolding, and bullet points where needed.\n\nDo not output anything other than the valid JSON object.\n\nAlways introduce yourself as an AI Researcher."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        900,
+        1060
+      ],
+      "id": "45accdf3-8ed5-415e-8503-663aa89c7dd5",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "GGNW9JnvMJrZ8lu8",
+          "name": "OpenAi account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "krystian7431@gmail.com",
+        "subject": "Ideas Summarizon",
+        "message": "={{ $json.message.content.emailBody }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        1060
+      ],
+      "id": "821c6f48-289c-441b-8278-a0acf89e40b2",
+      "name": "Send a message",
+      "webhookId": "65bde627-0d67-4ac7-a744-e025c3c35b08",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lFEqkhcaTtYQk41l",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Search Business Ideas (Multiple Subreddits)",
+        "height": 1120,
+        "width": 2260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -360
+      ],
+      "id": "edf8386d-e063-43f9-b79f-12aa3f7d6ce0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Get Business Ideas (One Niche)",
+        "height": 640,
+        "width": 2260,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        780
+      ],
+      "id": "4df75e8e-363a-4e4d-a86f-2ade5e8a6e47",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many posts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get many posts1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get many posts2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get many posts3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many posts": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many posts3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many posts2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many posts1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Search for a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search for a post": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "93eae973-0221-4ac2-9f18-cf554ebf73b1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f96a7e8659163312cbaf16ad76688747ea79fa6bf8e4ec720c14444abdf2c12c"
+  },
+  "id": "VHIdhL5zEVJge8Wg",
+  "tags": []
+}

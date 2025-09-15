@@ -1,0 +1,465 @@
+{
+  "name": "Customer Feedback Sentiment Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Customer Feedback",
+        "formDescription": "We value your feedback! Let us know about your experience and what we can improve",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Please enter your name...",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "Please enter your email...",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Feedback",
+              "fieldType": "textarea",
+              "placeholder": "Please describe your experience...",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        -144
+      ],
+      "id": "36ce4a3f-648e-4b1f-b7e6-0468eeee3460",
+      "name": "On form submission",
+      "webhookId": "282d71a8-bf16-49c1-8f77-35c6219c63f2"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.Feedback }}",
+        "options": {
+          "categories": "Positive, Negative"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.sentimentAnalysis",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        -144
+      ],
+      "id": "1f28c080-09f9-4698-bffc-663584223b37",
+      "name": "Sentiment Analysis"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        256
+      ],
+      "id": "70dd6404-2928-4068-8521-521a8c941003",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULctv1aW08WV7LUC",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1V7y3DpfmfmtxHLQafi3jPgqyCrWkt3zI-87eAAXR4LE",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback Form Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1V7y3DpfmfmtxHLQafi3jPgqyCrWkt3zI-87eAAXR4LE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Positive",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1V7y3DpfmfmtxHLQafi3jPgqyCrWkt3zI-87eAAXR4LE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('On form submission').item.json.Email }}",
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "Feedback": "={{ $('On form submission').item.json.Feedback }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        368,
+        -240
+      ],
+      "id": "a8fa10c0-27cc-4f33-b4f6-9c430d098d8e",
+      "name": "Add Positive Feedback",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TQHNRwbFTxYXwnxr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a customer support representative for an AI Automation Agency known as AdaptifyAI specialized in helping SME implement AI Agents and AI Automation solutions.\n\nWrite a friendly response to the customer feedback beloe. Format as HTML email and sign from Marc at AdaptifyAI. Return only HTML code, do not include ```html\n\nCustomer Name:\n\n {{ $('On form submission').item.json.Name }}\n\nFeedback:\n\n{{ $('On form submission').item.json.Feedback }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        576,
+        -240
+      ],
+      "id": "a7e795e0-0cec-48ca-a0af-e758c7ae9619",
+      "name": "Write Positive Response"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Thank you for your valuable feedback",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        928,
+        -240
+      ],
+      "id": "b8430180-cb96-4c68-94d7-460e7a8b1052",
+      "name": "Send response to positive feedback",
+      "webhookId": "9041a35a-efcc-475f-9411-e5a58fe9bdd0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "hZdb5wYmZdKx7irU",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a customer support representative for an AI Automation Agency known as AdaptifyAI specialized in helping SME implement AI Agents and AI Automation solutions.\n\nA client jst submitted feedback about our services which you can see below.\n\nPlease provide a concise suggestion on what AdaptifyAI cando to address their concerns and improve client  satisfaction in the future\n\n\n\nFeedback:\n\n{{ $('On form submission').item.json.Feedback }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        560,
+        0
+      ],
+      "id": "a8f64165-1a76-419d-a479-1fd094862c51",
+      "name": "Suggests Improvements"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1V7y3DpfmfmtxHLQafi3jPgqyCrWkt3zI-87eAAXR4LE",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback Form Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1V7y3DpfmfmtxHLQafi3jPgqyCrWkt3zI-87eAAXR4LE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 851926337,
+          "mode": "list",
+          "cachedResultName": "Negative",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1V7y3DpfmfmtxHLQafi3jPgqyCrWkt3zI-87eAAXR4LE/edit#gid=851926337"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('On form submission').item.json.Email }}",
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "Feedback": "={{ $('On form submission').item.json.Feedback }}",
+            "AI Suggestion": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Suggestion",
+              "displayName": "AI Suggestion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        912,
+        0
+      ],
+      "id": "422c31f9-66ec-419d-9e60-6923553bc7be",
+      "name": "Add Negative Feedback",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TQHNRwbFTxYXwnxr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a customer support representative for an AI Automation Agency known as AdaptifyAI specialized in helping SME implement AI Agents and AI Automation solutions.\n\nWrite a friendly  and concise response to the followin customer feedback. \n\nThe email should thank the client for their feedback about the services, acknowledge thei concerns, and inform that this has been escalated to our management . Offer to extend their current autmaton package with one additional AI Agent integration at no extra charge.\n\n\nFormat as HTML email and sign from Marc at AdaptifyAI. Return only HTML code, do not include ```html\n\nCustomer Name:\n\n {{ $('On form submission').item.json.Name }}\n\nFeedback:\n\n{{ $('On form submission').item.json.Feedback }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "94e3e89f-db88-4dfc-9e2a-5d431a611cbd",
+      "name": "Write Apology Email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "We're sorry here's how we'll fih this ",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1536,
+        0
+      ],
+      "id": "0302ad31-a285-44dc-92cc-504405ed8813",
+      "name": "Send a message",
+      "webhookId": "7a0dc0d3-fc93-42e5-9ba8-178a603100ae",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "hZdb5wYmZdKx7irU",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Positive Response",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Suggests Improvements",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Apology Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentiment Analysis": {
+      "main": [
+        [
+          {
+            "node": "Add Positive Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Suggests Improvements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Positive Feedback": {
+      "main": [
+        [
+          {
+            "node": "Write Positive Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Positive Response": {
+      "main": [
+        [
+          {
+            "node": "Send response to positive feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Suggests Improvements": {
+      "main": [
+        [
+          {
+            "node": "Add Negative Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Negative Feedback": {
+      "main": [
+        [
+          {
+            "node": "Write Apology Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Apology Email": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b554e8f2-972e-48d9-b195-af05cdccc144",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ae59e6b831344dba624c99cbe778a4bc47150f8e64de86a8011d15bac8e58c21"
+  },
+  "id": "eIN6pClRolSJpXOb",
+  "tags": []
+}

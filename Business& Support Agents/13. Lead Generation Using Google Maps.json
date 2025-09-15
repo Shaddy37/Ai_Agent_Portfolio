@@ -1,0 +1,300 @@
+{
+  "name": "Lead Generation Using Google Maps",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1120,
+        -192
+      ],
+      "id": "93cacb0a-cd41-4aae-9e41-0c0083dbfcb7",
+      "name": "When chat message received",
+      "webhookId": "b25df0c6-5617-4581-9390-28f4266a80ce"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -864,
+        32
+      ],
+      "id": "b863aac2-b543-4ccb-b216-7aa345611b5f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=This bot helps you scrape all contact information for lead generation from Google Maps. Use the query parameter \"q\" for the search term, \"ll\" for latitude and longitude, and \"page\" for the current pagination index.",
+        "url": "https://google.serper.dev/maps",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "ll",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+            },
+            {
+              "name": "page",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-KEY",
+              "value": "7ec430f62a4d53bd44ba210d23d7dd456bdb6cb0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        32
+      ],
+      "id": "7fe763da-65ec-4d3e-9d0b-c896bee4d218",
+      "name": "Map Checker"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Prompt: {{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are a research assistant helping the user collect contact details from the “Map Checker” tool or a website.\n\nYour job is to extract and return all contact information in a clearly structured JSON format, following the example below:\n\n[\n  {\n    \"Name\": \"Dexters.co\",\n    \"Address\": \"54 Borough High St, London Bridge, London SE1 1XL, United Kingdom\",\n    \"Phone\": \"+44 20 7650 5100\",\n    \"Website\": \"https://www.dexters.co.uk/contact-us/our-offices/london-bridge\",\n    \"Rating\": \"4.9\",\n    \"Opening Hours\": \"8 AM–8 PM daily\"\n  },\n  {\n    \"Address\": \"realestateagentslondon\",\n    \"Address\": \"75A Barking Rd, London E16 4HB, United Kingdom\",\n    \"Phone\": \"+44 20 7055 0441\",\n    \"Website\": \"https://realestateagentslondon.co.uk/\",\n    \"Rating\": \"4.8\",\n    \"Opening Hours\": \"9:30 AM–5:30 PM, Saturday 11 AM–4 PM, Closed Sunday\"\n  }\n  // more entries...\n]\n\nReturn ONLY this JSON array in the response.\n\nDo not wrap it inside another object or string — just output the raw array.\n\nMake sure:\n- All values are properly filled in and escaped\n- No nested or malformed JSON\n- If a value is missing (e.g., website), use an empty string: \"Website\": \"\"\n\nThis format will be used by a code node to extract values before sending them to Google Sheets.\n\nOnly return the response in valid JSON format, without any other elements.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -912,
+        -192
+      ],
+      "id": "f2c09183-2b1a-490a-b8c6-592cd510b907",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the full response string from the previous step (usually \"AI Agent\" or similar)\nconst output = items[0].json.output;\n\n// Try to extract the JSON array from the output string\nconst jsonStart = output.indexOf('[');\nconst jsonEnd = output.lastIndexOf(']') + 1;\nconst jsonString = output.slice(jsonStart, jsonEnd);\n\n// Parse the JSON array\nconst contacts = JSON.parse(jsonString);\n\n// Optionally, return each contact as a separate item for downstream nodes (like Sheets)\nreturn contacts.map(contact => ({ json: contact }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        -192
+      ],
+      "id": "09e4e7f8-59c5-4a83-9d4f-0b1f0606e61b",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ptZdnFJSF5i3dTloW6Q6CRr7o4m3HcIB4bn-GaYpzjk",
+          "mode": "list",
+          "cachedResultName": "Map Searcher",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ptZdnFJSF5i3dTloW6Q6CRr7o4m3HcIB4bn-GaYpzjk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ptZdnFJSF5i3dTloW6Q6CRr7o4m3HcIB4bn-GaYpzjk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Website": "={{ $json.Website }}",
+            "Phone": "={{ $json.Phone }}",
+            "Address": "={{ $json.Address }}",
+            "Opening Hours": "={{ $json['Opening Hours'] }}",
+            "Name": "={{ $json.Name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Opening Hours",
+              "displayName": "Opening Hours",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -320,
+        -192
+      ],
+      "id": "0cdf5ff7-07d1-4c57-92a1-ff097364deed",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VjB52JghQlX5ZmcR",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1056,
+        32
+      ],
+      "id": "7e10601c-544e-4242-ae19-7395e66835fc",
+      "name": "GPT-5",
+      "credentials": {
+        "openAiApi": {
+          "id": "5GBaPClALhBlVGuT",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Checker": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "28e8f34c-e10c-47cc-8a7c-36da284bb4ab",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8ec8bfddbd59fdde442d5ed0bec9c8e336f78ad4e7b2c1393fe111ac5a29897c"
+  },
+  "id": "ORYhlwoSuDPKjVtF",
+  "tags": []
+}
