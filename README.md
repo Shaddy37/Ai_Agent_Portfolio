@@ -1,51 +1,145 @@
-# Muhammad Shadab Shams
-## Workflow Automation Specialist | n8n Expert | SEO Automation Engineer
+# Muhammad Shadab Shams 🚀
 
-Building intelligent automation solutions that eliminate manual work and scale businesses.
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=7B2CBF&height=150&section=header&text=AI%20Automation%20Expert&fontSize=50&animation=fadeIn&fontAlignY=30" />
+</p>
 
-### 🚀 What I Do
-- Transform 4-hour manual processes into 30-second automations
-- Build cost-effective alternatives to expensive SaaS tools
-- Create AI-powered content generation pipelines
-- Develop custom API integrations and micro-SaaS solutions
-
-### 💼 Current Focus
-- **n8n Workflow Development** - 50+ production workflows
-- **SEO Automation** - Custom tools replacing $200/month subscriptions
-- **Content Pipeline Automation** - YouTube, social media, blog automation
-- **Business Process Optimization** - Reducing operational costs by 80%
-
-### 🛠️ Tech Stack
-![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
-![Node.js](https://img.shields.io/badge/-Node.js-339933?style=flat&logo=node.js&logoColor=white)
-![MongoDB](https://img.shields.io/badge/-MongoDB-47A248?style=flat&logo=mongodb&logoColor=white)
-![n8n](https://img.shields.io/badge/-n8n-EA4B71?style=flat&logo=n8n&logoColor=white)
-
-### 📊 GitHub Stats
-![Shadab Shams's Stats](https://github-readme-stats.vercel.app/api?username=Shaddy37&theme=gruvbox&show_icons=true&hide_border=false&count_private=true) ![Shaddy37's Streak](https://github-readme-streak-stats.herokuapp.com/?user=Shaddy37&theme=gruvbox&hide_border=false)
-
-### 🎯 Featured Projects
-| Project | Description | Tech Stack | Impact |
-|---------|-------------|------------|---------|
-| [YouTube Automation Pipeline](./n8n-automation-workflows/youtube-pipeline) | End-to-end video generation & publishing | n8n, FFmpeg, YouTube API | 1000+ videos/month |
-| [SEO Keyword Research API](./seo-automation-suite/keyword-generator) | Free alternative to expensive SEO tools | n8n, Google API, Webhooks | Saves $200/month |
-| [Multi-Platform Content Sync](./micro-saas-automations/content-sync) | Automated cross-platform posting | n8n, Multiple APIs | 95% time reduction |
-
-### 📈 Business Impact
-- **50+ Automation Workflows** deployed in production
-- **$2000+/month** in tool cost savings for clients
-- **85% reduction** in manual processing time
-- **20+ API integrations** across various platforms
-
-### 🎓 Continuous Learning
-- Currently: Advanced n8n AI Agent Development
-- Next: Exploring workflow optimization patterns
-- Focus: Scaling automation architecture
-
-### 📫 Let's Connect
-- 💼 [LinkedIn](https://www.linkedin.com/in/muhammad-shadab-shams-8b07132b6)
-- 📧 muhammadshadabshams@gmail.com
-- 🌍 Available for remote opportunities worldwide
+<p align="center">
+  <img src="https://img.shields.io/badge/-n8n%20Expert-EA4B71?style=for-the-badge&logo=nodedotjs&logoColor=white" />
+  <img src="https://img.shields.io/badge/-Voice%20Agents-7B2CBF?style=for-the-badge&logo=phone&logoColor=white" />
+  <img src="https://img.shields.io/badge/-Workflow%20Automation-9D4EDD?style=for-the-badge&logo=⚡&logoColor=white" />
+  <img src="https://img.shields.io/badge/-SEO%20Automation-7B2CBF?style=for-the-badge&logo=google&logoColor=white" />
+</p>
 
 ---
-*"Turning complex business processes into simple, automated workflows"*
+
+## 💡 Building intelligent systems that work 24/7 so businesses don't have to
+
+---
+
+## 📊 Impact
+
+| Metric | Achievement |
+|--------|------------|
+| 🏗️ **Workflows Deployed** | 200+ production workflows |
+| 💰 **Client Savings** | $2,000+/month per client |
+| ⚡ **Process Reduction** | 85% less manual work |
+| 📞 **Voice Agents** | Hundreds of calls handled 24/7 |
+| 💵 **Cost Efficiency** | Built agency for $0 using free tools |
+
+---
+
+## 🛠️ Tech Stack
+
+### Automation Platforms
+<p>
+  <img src="https://img.shields.io/badge/n8n-EA4B71?style=flat-square&logo=n8n&logoColor=white" />
+  <img src="https://img.shields.io/badge/Make.com-FF3008?style=flat-square&logo=⚡&logoColor=white" />
+  <img src="https://img.shields.io/badge/Zapier-FF4A00?style=flat-square&logo=zapier&logoColor=white" />
+  <img src="https://img.shields.io/badge/ViaSocket-7B2CBF?style=flat-square&logo=socket.io&logoColor=white" />
+</p>
+
+### AI & Voice Agents
+<p>
+  <img src="https://img.shields.io/badge/Claude%20Code-9D4EDD?style=flat-square&logo=anthropic&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vapi-7B2CBF?style=flat-square&logo=phone&logoColor=white" />
+  <img src="https://img.shields.io/badge/Voiceflow-9D4EDD?style=flat-square&logo=voice&logoColor=white" />
+  <img src="https://img.shields.io/badge/OpenAI-7B2CBF?style=flat-square&logo=openai&logoColor=white" />
+</p>
+
+### Development Tools
+<p>
+  <img src="https://img.shields.io/badge/Supabase-9D4EDD?style=flat-square&logo=supabase&logoColor=white" />
+  <img src="https://img.shields.io/badge/Cursor-7B2CBF?style=flat-square&logo=cursor&logoColor=white" />
+  <img src="https://img.shields.io/badge/Antigravity-9D4EDD?style=flat-square&logo=🚀&logoColor=white" />
+  <img src="https://img.shields.io/badge/OpenCode-7B2CBF?style=flat-square&logo=code&logoColor=white" />
+</p>
+
+---
+
+## 📂 Featured Projects
+
+### 🚀 AIFLOXIUM - AI Automation Agency
+- **Website**: [aifloxium.online](https://aifloxium.online)
+- **Tech**: OpenCode + Antigravity + MiniMax M2.5
+- **Achievement**: Built entirely for **$0 cost**
+- **Description**: Full-service AI automation agency providing workflow solutions
+
+### 🤖 Richei - AI Chatbot
+- **Capabilities**: Handles consultations → Qualifies leads → Books meetings
+- **Tech**: n8n + AI
+- **Impact**: **100% lead capture rate**, 24/7 availability
+
+### 📄 Invoice Automation System
+- **Capabilities**: PDF scanning → Data extraction → Financial report organization
+- **Tech**: n8n + AI
+- **Impact**: Zero manual data entry, automated processing
+
+### 🌐 ScreenOrbit - SEO Portfolio
+- **Website**: [screenorbit.com](https://screenorbit.com)
+- **Achievement**: Domain Rating **DR 7**, #1 ranking on Google
+- **Tech**: SEO automation tools
+
+### ⚡ Claude Code Workflows
+- **Method**: Describe workflows in plain English → Claude Code builds them
+- **Impact**: Rapid prototyping and deployment of client solutions
+
+---
+
+## 📈 GitHub Stats
+
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=Shaddy37&show_icons=true&theme=purple&bg_color=0d1117&title_color=9D4EDD&text_color=ffffff&icon_color=7B2CBF" />
+</p>
+
+<p align="center">
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=Shaddy37&theme=purple&background=0d1117&stroke=9D4EDD&ring=7B2CBF&fire=9D4EDD&currStreakLabel=7B2CBF" />
+</p>
+
+---
+
+## 🎯 What I Build
+
+| Service | Description |
+|---------|-------------|
+| 🤖 **AI Workflow Automation** | n8n, Make, Zapier integrations |
+| 💬 **AI Chatbots** | Qualify leads & book meetings automatically |
+| 📞 **Voice Agents** | 24/7 customer support & handling |
+| 💻 **Claude Code Development** | Natural language → production code |
+| 🔍 **SEO Systems** | That actually rank and drive traffic |
+
+---
+
+## 🏆 Achievements
+
+<p align="center">
+  <img src="https://github-profile-trophy.vercel.app/?username=Shaddy37&theme=purple&column=4&margin-w=15&margin-h=15" />
+</p>
+
+---
+
+## 📫 Let's Connect
+
+<p align="center">
+  
+💼 **[LinkedIn](https://linkedin.com/in/shadabshams)**
+
+📧 **Email**: shadabshamsaiautomation@gmail.com
+
+📅 **[Book Consultation](https://calendly.com/shadabshamsaiautomation)**
+
+🌐 **[AIFLOXIUM](https://aifloxium.online)**
+
+</p>
+
+---
+
+<p align="center">
+  <em>💜 "Turning 'I wish this was automated' into 'it's already done'"</em>
+</p>
+
+---
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=7B2CBF&height=80&section=footer" />
+</p>
