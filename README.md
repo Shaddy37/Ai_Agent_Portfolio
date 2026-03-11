@@ -88,13 +88,7 @@
 
 ## 📈 GitHub Stats
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Shaddy37&show_icons=true&theme=purple&bg_color=0d1117&title_color=9D4EDD&text_color=ffffff&icon_color=7B2CBF" />
-</p>
-
-<p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=Shaddy37&theme=purple&background=0d1117&stroke=9D4EDD&ring=7B2CBF&fire=9D4EDD&currStreakLabel=7B2CBF" />
-</p>
+![Shaddy37's Streak](https://github-readme-streak-stats.herokuapp.com/?user=Shaddy37&theme=outrun&hide_border=false)
 
 ---
 
